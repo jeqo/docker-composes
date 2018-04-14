@@ -1,0 +1,14 @@
+version: "3"
+services:
+  master:
+    image: jenkinsci/blueocean
+    user: root
+    restart: always
+    ports:
+      - 18080:8080
+      - 50000:50000
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - master-data:/var/jenkins_home
+volumes:
+  master-data:
