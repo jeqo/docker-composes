@@ -1,14 +1,19 @@
-version: "3"
+---
+version: '3'
 services:
-  master:
-    image: jenkinsci/blueocean
-    user: root
+  jenkins:
+    image: jenkins/jenkins:lts-alpine
+    hostname: jenkins
+    container_name: jenkins
     restart: always
     ports:
-      - 18080:8080
-      - 50000:50000
+      - 7808:8080
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - master-data:/var/jenkins_home
+      - data:/var/jenkins_home
 volumes:
-  master-data:
+  data:
+
+networks:
+  default:
+    external:
+      name: composes

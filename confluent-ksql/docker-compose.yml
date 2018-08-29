@@ -1,0 +1,27 @@
+---
+version: '3'
+services:
+  ksql:
+    image: confluentinc/cp-ksql-server:5.0.0
+    hostname: ksql
+    container_name: ksql
+    ports:
+      - 7088:7088
+    environment:
+      KSQL_BOOTSTRAP_SERVERS: broker:9092
+      KSQL_LISTENERS: http://0.0.0.0:7088/
+      KSQL_KSQL_SERVICE_ID: ksql-1
+      KSQL_OPTS: '-Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.port=5555'
+  ksql-jmx-exporter:
+    image: jeqo/prometheus-jmx-exporter-httpserver:0.3.1
+    container_name: ksql-jmx-exporter
+    volumes:
+      - ./ksql-jmx-exporter/httpserver.yml:/jmx-exporter/config/httpserver.yml
+    ports:
+      - 7560:7560
+    environment:
+      JMX_EXPORTER_HTTP_PORT: 7560
+networks:
+  default:
+    external:
+      name: composes

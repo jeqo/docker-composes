@@ -1,0 +1,14 @@
+---
+version: '3'
+services:
+  vector:
+    image: netflixoss/vector:v1.2.2
+    hostname: vector
+    container_name: vector
+    restart: always
+    ports:
+      - 7000:80
+networks:
+  default:
+    external:
+      name: composes

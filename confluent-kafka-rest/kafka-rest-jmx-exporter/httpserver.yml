@@ -1,0 +1,8 @@
+---
+hostPort: kafka-rest:5555
+username:
+password:
+
+rules:
+  - pattern: ".*"
+

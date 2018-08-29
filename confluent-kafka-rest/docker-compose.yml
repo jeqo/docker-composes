@@ -1,0 +1,28 @@
+---
+version: '3'
+services:
+  kafka-rest:
+    image: confluentinc/cp-kafka-rest:5.0.0
+    hostname: kafka-rest
+    container_name: kafka-rest
+    ports:
+      - 7082:7082
+    environment:
+      KAFKA_REST_BOOTSTRAP_SERVERS: PLAINTEXT://broker:9092
+      KAFKA_REST_HOST_NAME: "0.0.0.0"
+      KAFKA_REST_LISTENERS: http://0.0.0.0:7082
+      KAFKA_REST_SCHEMA_REGISTRY_URL: http://schema-registry:7081
+      KAFKA_OPTS: '-Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.port=5555'  
+  kafka-rest-jmx-exporter:
+    image: jeqo/prometheus-jmx-exporter-httpserver:0.3.1
+    container_name: kafka-rest-jmx-exporter
+    volumes:
+      - ./kafka-rest-jmx-exporter/httpserver.yml:/jmx-exporter/config/httpserver.yml
+    ports:
+      - 7562:7562
+    environment:
+      JMX_EXPORTER_HTTP_PORT: 7562
+networks: 
+  default:
+    external:
+      name: composes

@@ -1,0 +1,8 @@
+---
+hostPort: ksql:5555
+username:
+password:
+
+rules:
+  - pattern: ".*"
+

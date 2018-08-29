@@ -1,0 +1,8 @@
+---
+hostPort: connect-worker:5555
+username:
+password:
+
+rules:
+  - pattern: ".*"
+

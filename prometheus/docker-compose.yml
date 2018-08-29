@@ -1,0 +1,18 @@
+---
+version: '3'
+services:
+  prometheus:
+    image: prom/prometheus:v2.3.2
+    hostname: prometheus
+    container_name: prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      - data:/prometheus
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+volumes:
+  data:
+networks:
+  default:
+    external:
+      name: composes
