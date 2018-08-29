@@ -3,12 +3,12 @@ all: network up-basic
 
 .PHONY: network
 network:
-	docker network create composes
+	docker network create 
 
 .PHONY: stop-all
-stop-all: ## Stop all docker-composes running
-    # List directories in composes and run stop docker compose
-	for dir in $(shell find $(CURDIR)/composes -mindepth 1 -maxdepth 1 -type d); do \
+stop-all: ## Stop all docker- running
+    # List directories in  and run stop docker compose
+	for dir in $(shell find $(CURDIR)/ -mindepth 1 -maxdepth 1 -type d); do \
 		cd $$dir; \
 	    docker-compose stop; \
 	done
@@ -17,9 +17,9 @@ stop-all: ## Stop all docker-composes running
 up-basic: up-vector up-jenkins up-consul
 
 .PHONY: up-all
-up-all: ## Stop all docker-composes running
-    # List directories in composes and run stop docker compose
-	for dir in $(shell find $(CURDIR)/composes -mindepth 1 -maxdepth 1 -type d); do \
+up-all: ## Stop all docker- running
+    # List directories in  and run stop docker compose
+	for dir in $(shell find $(CURDIR)/ -mindepth 1 -maxdepth 1 -type d); do \
 		cd $$dir; \
 	    docker-compose up -d; \
 	done
@@ -27,54 +27,54 @@ up-all: ## Stop all docker-composes running
 .PHONY: up-confluent-ksql
 up-confluent-ksql: up-confluent-schema-registry
 	## Start confluent-platform ksql compose
-	cd $(CURDIR)/composes/confluent-ksql; \
+	cd $(CURDIR)/confluent-ksql; \
 	docker-compose up -d
 
 .PHONY: up-confluent-kafka-connect
 up-confluent-connect: up-confluent-schema-registry
 	## Start confluent-platform kafka connect distributed compose
-	cd $(CURDIR)/composes/confluent-kafka-connect; \
+	cd $(CURDIR)/confluent-kafka-connect; \
 	docker-compose up -d
 
 .PHONY: up-confluent-schema-registry
 up-confluent-schema-registry: up-confluent-core
 	## Start confluent-platform schema registry compose
-	cd $(CURDIR)/composes/confluent-schema-registry; \
+	cd $(CURDIR)/confluent-schema-registry; \
 	docker-compose up -d
 
 .PHONY: up-zipkin
 up-zipkin: up-confluent-kafka up-prometheus up-grafana
 	## Start grafana compose
-	cd $(CURDIR)/composes/zipkin; \
+	cd $(CURDIR)/zipkin; \
 	docker-compose up -d
 
 .PHONY: up-confluent-kafka
 up-confluent-core: ## Start confluent-platform core compose
-	cd $(CURDIR)/composes/confluent-kafka; \
+	cd $(CURDIR)//confluent-kafka; \
 	docker-compose up -d
 
 .PHONY: up-grafana
 up-grafana: up-prometheus
 	## Start grafana compose
-	cd $(CURDIR)/composes/grafana; \
+	cd $(CURDIR)/grafana; \
 	docker-compose up -d
 
 .PHONY: up-prometheus
 up-prometheus: ## Start prometheus compose
-	cd $(CURDIR)/composes/prometheus; \
+	cd $(CURDIR)/prometheus; \
 	docker-compose up -d
 
 .PHONY: up-vector
 up-vector: ## Start netflix oss vector compose
-	cd $(CURDIR)/composes/vector; \
+	cd $(CURDIR)/vector; \
 	docker-compose up -d
 
 .PHONY: up-consul
 up-consul: ## Start consul compose
-	cd $(CURDIR)/composes/consul; \
+	cd $(CURDIR)/consul; \
 	docker-compose up -d
 
 .PHONY: up-jenkins
 up-jenkins: ## Up jenkins compose
-	cd $(CURDIR)/composes/jenkins; \
+	cd $(CURDIR)/jenkins; \
 	docker-compose up -d
