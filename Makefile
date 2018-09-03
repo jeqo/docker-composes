@@ -3,7 +3,7 @@ all: network up-basic
 
 .PHONY: network
 network:
-	docker network create 
+	docker network create composes 
 
 .PHONY: stop-all
 stop-all: ## Stop all docker- running
