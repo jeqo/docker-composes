@@ -3,7 +3,7 @@ all: network up-basic
 
 .PHONY: network
 network:
-	docker network create composes 
+	docker network create composes
 
 .PHONY: stop-all
 stop-all: ## Stop all docker- running
@@ -49,7 +49,7 @@ up-zipkin: up-confluent-kafka up-prometheus up-grafana
 	docker-compose up -d
 
 .PHONY: up-confluent-kafka
-up-confluent-core: ## Start confluent-platform core compose
+up-confluent-kafka: ## Start confluent-platform core compose
 	cd $(CURDIR)//confluent-kafka; \
 	docker-compose up -d
 
