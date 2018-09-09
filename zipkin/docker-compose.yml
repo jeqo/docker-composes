@@ -15,9 +15,9 @@ services:
       MYSQL_HOST: zipkin-mysql
       KAFKA_BOOTSTRAP_SERVERS: broker:9092
       # Uncomment to enable self-tracing
-      SELF_TRACING_ENABLED: "true"
+      # SELF_TRACING_ENABLED: "true"
       # Uncomment to enable debug logging
-      JAVA_OPTS: "-Dlogging.level.zipkin=DEBUG -Dlogging.level.zipkin2=DEBUG"
+      # JAVA_OPTS: "-Dlogging.level.zipkin=DEBUG -Dlogging.level.zipkin2=DEBUG"
     ports:
       - 9411:9411
     depends_on:
