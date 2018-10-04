@@ -2,7 +2,7 @@
 version: '3.7'
 services:
   connect-worker:
-    image: confluentinc/cp-kafka-connect:5.0.0
+    image: syscomiddleware/cp-kafka-connect:5.0.0-0.1
     hostname: connect-worker
     container_name: connect-worker
     ports:
@@ -25,13 +25,9 @@ services:
       CONNECT_INTERNAL_KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
       CONNECT_INTERNAL_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
       CONNECT_PLUGIN_PATH: /usr/share/java,/etc/kafka-connect-jars
-      CLASSPATH: /etc/kafka-connect-interceptors/zipkin-kafka-interceptors-0.2.0.jar
-      CONNECT_PRODUCER_INTERCEPTOR_CLASSES: "no.sysco.middleware.zipkin.kafka.interceptors.TracingProducerInterceptor"
-      CONNECT_CONSUMER_INTERCEPTOR_CLASSES: "no.sysco.middleware.zipkin.kafka.interceptors.TracingConsumerInterceptor"
+      CONNECT_PRODUCER_INTERCEPTOR_CLASSES: 'no.sysco.middleware.kafka.interceptor.zipkin.TracingProducerInterceptor'
+      CONNECT_CONSUMER_INTERCEPTOR_CLASSES: 'no.sysco.middleware.kafka.interceptor.zipkin.TracingConsumerInterceptor'
       KAFKA_OPTS: '-Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.port=5555'
-    volumes:
-      - jars:/etc/kafka-connect-jars
-      - ./interceptors:/etc/kafka-connect-interceptors
   connect-jmx_exporter:
     image: jeqo/prometheus-jmx-exporter-httpserver:0.3.1
     container_name: connect-jmx-exporter
