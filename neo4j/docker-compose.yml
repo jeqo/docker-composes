@@ -1,0 +1,16 @@
+---
+version: '3.1'
+services:
+  neo4j:
+    image: neo4j:3.3.7
+    ports:
+      - 7474:7474
+      - 7687:7687
+    volumes:
+      - data:/data
+volumes:
+  data:
+networks:
+  default:
+    external:
+      name: composes
