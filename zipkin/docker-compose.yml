@@ -1,19 +1,19 @@
 ---
 version: '3.7'
 services:
-  zipkin-mysql:
-    image: openzipkin/zipkin-mysql:2.11
-    hostname: zipkin-mysql
-    container_name: zipkin-mysql
-    volumes:
-      - data:/mysql/data
+  zipkin-elasticsearch:
+    image: openzipkin/zipkin-elasticsearch6:2.11
+    hostname: zipkin-elasticsearch
+    container_name: zipkin-elasticsearch
+    ports:
+      - 19200:9200
   zipkin:
     image: openzipkin/zipkin:2.11
     container_name: zipkin
     environment:
-      STORAGE_TYPE: mysql
-      MYSQL_HOST: zipkin-mysql
-      KAFKA_BOOTSTRAP_SERVERS: broker:9092
+      STORAGE_TYPE: elasticsearch
+      ES_HOSTS: zipkin-elasticsearch
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       # Uncomment to enable self-tracing
       # SELF_TRACING_ENABLED: "true"
       # Uncomment to enable debug logging
@@ -21,18 +21,16 @@ services:
     ports:
       - 9411:9411
     depends_on:
-      - zipkin-mysql
+      - zipkin-elasticsearch
   zipkin-dependencies:
     image: openzipkin/zipkin-dependencies:2
     hostname: zipkin-dependencies
     container_name: zipkin-dependencies
     environment:
-      STORAGE_TYPE: mysql
-      MYSQL_HOST: zipkin-mysql
-      MYSQL_USER: zipkin
-      MYSQL_PASS: zipkin
+      - STORAGE_TYPE=elasticsearch
+      - ES_HOSTS=elasticsearch
     depends_on:
-      - zipkin-mysql
+      - zipkin-elasticsearch
 volumes:
   data:
 networks:
