@@ -1,0 +1,23 @@
+---
+version: '3.7'
+services:
+  zipkin-cassandra:
+    image: openzipkin/zipkin-cassandra:2.11
+    ports:
+      - 9042:9042
+  zipkin:
+    image: openzipkin/zipkin:2.11
+    environment:
+      STORAGE_TYPE: cassandra3
+      CASSANDRA_CONTACT_POINTS: zipkin-cassandra
+      KAFKA_BOOTSTRAP_SERVERS: kafka0:9092,kafka1:9093,kafka2:9094
+    ports:
+      - 9412:9411
+    depends_on:
+      - zipkin-cassandra
+volumes:
+  data:
+networks:
+  default:
+    external:
+      name: composes

@@ -2,7 +2,7 @@
 hostPort: schema-registry:5555
 username:
 password:
-
+lowercaseOutputName: true
 rules:
   - pattern: ".*"
 
