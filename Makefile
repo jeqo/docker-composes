@@ -1,6 +1,10 @@
 .PHONY: all
 all: network up-basic
 
+.PHONY: machine
+machine:
+	docker-machine create -d virtualbox --virtualbox-cpu-count 4 --virtualbox-disk-size 80000 --virtualbox-memory 8192 default
+
 .PHONY: network
 network:
 	docker network create composes

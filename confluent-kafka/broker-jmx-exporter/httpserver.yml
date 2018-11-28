@@ -1,8 +1,0 @@
----
-hostPort: broker:5555
-username:
-password:
-
-rules:
-  - pattern: ".*"
-

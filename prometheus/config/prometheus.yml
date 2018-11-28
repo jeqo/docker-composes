@@ -30,16 +30,10 @@ scrape_configs:
 
   - job_name: 'zookeeper'
     static_configs:
-      - targets: ['localhost:5556']
+      - targets: ['zookeeper-jmx-exporter:7556']
   - job_name: 'kafka'
     static_configs:
-      - targets: ['localhost:5558']
-  - job_name: 'schema-registry'
-    static_configs:
-      - targets: ['localhost:5560']
-  - job_name: 'kafka-connect'
-    static_configs:
-      - targets: ['localhost:5562']
-  - job_name: 'ksql'
-    static_configs:
-      - targets: ['localhost:5564']
+      - targets:
+        - 'kafka-jmx-exporter0:7557'
+        - 'kafka-jmx-exporter1:7558'
+        - 'kafka-jmx-exporter2:7559'
