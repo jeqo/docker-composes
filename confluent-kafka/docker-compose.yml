@@ -2,7 +2,7 @@
 version: '3'
 services:
   zookeeper:
-    image: confluentinc/cp-zookeeper:5.0.0
+    image: confluentinc/cp-zookeeper:5.2.1
     ports:
       - 2181:2181
     environment:
@@ -13,7 +13,7 @@ services:
       - zk_data:/var/lib/zookeeper/data
       - zk_tx_logs:/var/lib/zookeeper/log
   kafka0:
-    image: confluentinc/cp-kafka:5.0.0
+    image: confluentinc/cp-kafka:5.2.1
     ports:
       - 9092:9092
       - 29092:29092
@@ -30,7 +30,7 @@ services:
     volumes:
       - kafka0_data:/var/lib/kafka/data
   kafka1:
-    image: confluentinc/cp-kafka:5.0.0
+    image: confluentinc/cp-kafka:5.2.1
     ports:
       - 9093:9093
       - 29093:29093
@@ -47,7 +47,7 @@ services:
     volumes:
       - kafka1_data:/var/lib/kafka/data
   kafka2:
-    image: confluentinc/cp-kafka:5.0.0
+    image: confluentinc/cp-kafka:5.2.1
     ports:
       - 9094:9094
       - 29094:29094
