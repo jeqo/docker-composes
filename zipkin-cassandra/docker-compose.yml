@@ -1,5 +1,5 @@
 ---
-version: '3.7'
+version: '3'
 services:
   zipkin-cassandra0:
     image: openzipkin/zipkin-cassandra:2.11
