@@ -1,0 +1,22 @@
+---
+version: '3'
+services:
+  cassandra0:
+    image: cassandra:3.11
+    hostname: cassandra0
+    ports:
+      - 9042:9042
+  cassandra1:
+    image: cassandra:3.11
+    hostname: cassandra1
+    environment:
+      CASSANDRA_SEEDS: cassandra0
+    ports:
+      - 9043:9042
+  cassandra2:
+    image: cassandra:3.11
+    hostname: cassandra2
+    environment:
+      CASSANDRA_SEEDS: cassandra0
+    ports:
+      - 9044:9042
