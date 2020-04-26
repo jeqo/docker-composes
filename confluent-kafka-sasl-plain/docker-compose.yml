@@ -2,31 +2,32 @@
 version: '3'
 services:
   zookeeper:
-    image: confluentinc/cp-zookeeper:5.2.1
+    image: confluentinc/cp-zookeeper
     ports:
       - 2181:2181
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
-      KAFKA_OPTS: '-Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.port=5555 -Dcom.sun.management.jmxremote.rmi.port=5555 -Djava.security.auth.login.config=/etc/kafka/secrets/zookeeper_server_jaas.conf -Dzookeeper.authProvider.1=org.apache.zookeeper.server.auth.SASLAuthenticationProvider'
+      KAFKA_OPTS: '-Djava.security.auth.login.config=/etc/kafka/secrets/zookeeper_server_jaas.conf -Dzookeeper.authProvider.1=org.apache.zookeeper.server.auth.SASLAuthenticationProvider'
     volumes:
       - ./secrets:/etc/kafka/secrets
-  kafkabroker100:
-    image: confluentinc/cp-kafka:5.2.1
+  kafka-broker:
+    image: confluentinc/cp-kafka
     ports:
-      - 29092:29092
-      - 29093:29093
+      - 19092:19092
+      - 19093:19093
     environment:
-      KAFKA_BROKER_ID: 100
+      KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,SASL_PLAINTEXT:SASL_PLAINTEXT,SASL_PLAINTEXT_HOST:SASL_PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafkabroker100:9092,SASL_PLAINTEXT://kafkabroker100:9093,PLAINTEXT_HOST://localhost:29092,SASL_PLAINTEXT_HOST://localhost:29093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-broker:9092,SASL_PLAINTEXT://kafka-broker:9093,PLAINTEXT_HOST://localhost:19092,SASL_PLAINTEXT_HOST://localhost:19093
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-      KAFKA_OPTS: '-Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.port=5555 -Dcom.sun.management.jmxremote.rmi.port=5555 -Djava.security.auth.login.config=/etc/kafka/secrets/kafka_server_jaas.conf'
+      KAFKA_OPTS: '-Djava.security.auth.login.config=/etc/kafka/secrets/kafka_server_jaas.conf'
       KAFKA_SECURITY_INTER_BROKER_PROTOCOL: SASL_PLAINTEXT
       KAFKA_SASL_ENABLED_MECHANISMS: PLAIN
       KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL: PLAIN
+      KAFKA_CONFLUENT_SUPPORT_METRICS_ENABLE: 'false'
     volumes:
       - ./secrets:/etc/kafka/secrets
     depends_on:
