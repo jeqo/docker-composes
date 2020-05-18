@@ -1,9 +1,0 @@
----
-version: '3'
-services:
-  ui:
-    image: expediadotcom/haystack-ui:1.0
-  metrictank:
-    image: grafana/metrictank:0.10.1
-  cassandra:
-    image: cassandra:3.9
