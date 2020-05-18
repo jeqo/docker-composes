@@ -1,0 +1,13 @@
+{
+    "connector.class": "io.confluent.connect.jdbc.JdbcSourceConnector",
+    "tasks.max": "1",
+    "topic.prefix": "jdbc_",
+    "connection.url": "jdbc:postgresql://postgres/postgres",
+    "connection.user": "postgres",
+    "connection.password": "example",
+    "table.whitelist": "source",
+    "mode": "timestamp+incrementing",
+    "timestamp.column.name": "CREATED",
+    "incrementing.column.name": "NUMBER",
+    "errors.log.enable": true
+  }
