@@ -1,0 +1,33 @@
+---
+version: '3'
+services:
+  prometheus:
+    image: prom/prometheus:v2.18.1
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus/config/:/etc/prometheus/
+  node-exporter:
+    image: prom/node-exporter:v1.0.0
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.ignored-mount-points'
+      - '^(aufs|proc|nsfs|shm|cgroup|tmpfs|binfmt_misc|debugfs|devpts|fusectl|hugetlbfs|fuse.lxcfs|mqueue|pstore|securityfs|sysfs|autofs|devtmpfs|configfs)'
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+  kafka-lag-exporter:
+    image: lightbend/kafka-lag-exporter:0.6.2
+    volumes:
+      - ./kafka-lag-exporter:/opt/docker/conf
+      # - ./prometheus/security:/etc/kafka/secrets
+  grafana:
+    image: grafana/grafana:7.0.1
+    environment:
+      GF_INSTALL_PLUGINS: grafana-piechart-panel
+    ports:
+      - 3000:3000
+    volumes:
+      - ./grafana/provisioning/:/etc/grafana/provisioning/
