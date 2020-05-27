@@ -29,7 +29,7 @@ services:
       CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: kafka:19092
       CONFLUENT_METRICS_REPORTER_ZOOKEEPER_CONNECT: zookeeper:2181
       CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
-      CONFLUENT_SUPPORT_METRICS_ENABLE: "false"
+      KAFKA_CONFLUENT_SUPPORT_METRICS_ENABLE: "false"
       CONFLUENT_SUPPORT_CUSTOMER_ID: anonymous
       KAFKA_OPTS: -javaagent:/opt/prometheus-jmx-exporter/jmx_prometheus_javaagent.jar=1234:/opt/prometheus-jmx-exporter/kafka-broker.yaml
     volumes:
