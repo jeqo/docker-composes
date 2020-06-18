@@ -68,7 +68,8 @@ logs_3:
 	docker-compose -f cluster-sasl-digest-md5.yml logs -f
 
 test_3:
-	${CONFLUENT_HOME}/bin/zookeeper-shell localhost:12181 ls /
-	${CONFLUENT_HOME}/bin/zookeeper-shell localhost:22181 create /test data
-	${CONFLUENT_HOME}/bin/zookeeper-shell localhost:32181 get /test
-	${CONFLUENT_HOME}/bin/zookeeper-shell localhost:42181 get /test
+	KAFKA_OPTS="-Djava.security.auth.login.config=./single-sasl-digest-md5/client.conf" ${CONFLUENT_HOME}/bin/zookeeper-shell localhost:12181 ls /
+	KAFKA_OPTS="-Djava.security.auth.login.config=./single-sasl-digest-md5/client.conf" ${CONFLUENT_HOME}/bin/zookeeper-shell localhost:22181 create /test-acl data sasl:kafka:cdrwa
+	KAFKA_OPTS="-Djava.security.auth.login.config=./single-sasl-digest-md5/client.conf" ${CONFLUENT_HOME}/bin/zookeeper-shell localhost:32181 get /test
+	KAFKA_OPTS="-Djava.security.auth.login.config=./single-sasl-digest-md5/client-bad.conf" ${CONFLUENT_HOME}/bin/zookeeper-shell localhost:12181 ls /zookeeper
+	KAFKA_OPTS="-Djava.security.auth.login.config=./single-sasl-digest-md5/client.conf" ${CONFLUENT_HOME}/bin/zookeeper-shell localhost:42181 get /test

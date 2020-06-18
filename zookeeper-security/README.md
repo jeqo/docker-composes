@@ -5,16 +5,28 @@
 Start a standalone Zookeeper server:
 
 ```bash
-make run-0
+make up_0
 ```
 
 And run a Zookeeper Shell:
 
 ```bash
-make zk-shell-0
+make test_0
 # ...
 WatchedEvent state:SyncConnected type:None path:null
-[config, quota]
+data
+```
+
+Or run all:
+
+```bash
+make -k all_1
+```
+
+Clean all:
+
+```bash
+make down_0
 ```
 
 ## Scenario 1: SASL/Digest-MD5 Authentication between client and server
@@ -22,24 +34,17 @@ WatchedEvent state:SyncConnected type:None path:null
 Start a Zookeeper with SASL-enabled:
 
 ```bash
-make run-1
+make up_1
 ```
 
 Run Zookeeper client with SASL Auth:
 
 ```bash
-make zk-shell-1
+make test_1
 # ...
 WatchedEvent state:SyncConnected type:None path:null
-[config, quota]
-```
-
-Then try with a wrong username/password:
-
-```bash
-make zk-shell-1-bad
+data
 # ...
-WatchedEvent state:Disconnected type:None path:null
 KeeperErrorCode = ConnectionLoss for /zookeeper
 ```
 
@@ -49,6 +54,42 @@ To avoid an `anonymous` user is able to connect, this variable forces clients to
       ZOOKEEPER_REQUIRE_CLIENT_AUTH_SCHEME: sasl
 ```
 
-## Scenario 2: SASL/Digest-MD5 Authentication between ensemble
+To run all:
 
+```bash
+make -k all_1
+```
 
+Clean all:
+
+```bash
+make down_1
+```
+
+## Scenario 2: Ensemble with No Authentication
+
+To run all:
+
+```bash
+make -k all_2
+```
+
+Clean all:
+
+```bash
+make down_2
+```
+
+## Scenario 3: Ensemble with SASL/Digest-MD5 Authentication
+
+To run all:
+
+```bash
+make -k all_3
+```
+
+Clean all:
+
+```bash
+make down_3
+```

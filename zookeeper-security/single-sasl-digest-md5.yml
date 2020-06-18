@@ -16,5 +16,4 @@ services:
       "
     volumes:
       - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
-      - ./single-sasl-digest-md5/zookeeper.properties:/etc/kafka/zookeeper.properties
       - ./single-sasl-digest-md5/zookeeper_jaas.conf:/etc/kafka/zookeeper_jaas.conf
