@@ -1,0 +1,62 @@
+---
+version: '3.4'
+x-zk-env:
+  &zk-env
+  ZOOKEEPER_SERVER_ID: 1
+  ZOOKEEPER_CLIENT_PORT: 12181
+  ZOOKEEPER_TICK_TIME: 2000
+  ZOOKEEPER_INIT_LIMIT: 5
+  ZOOKEEPER_SYNC_LIMIT: 2
+  ZOOKEEPER_SERVERS: zk1:2888:3888;zk2:2888:3888;zk3:2888:3888;zk4:2888:3888
+  ZOOKEEPER_AUTH_PROVIDER_SASL: org.apache.zookeeper.server.auth.SASLAuthenticationProvider
+  ZOOKEEPER_AUTH_ENABLE_SASL: "true"
+  ZOOKEEPER_QUORUM_AUTH_ENABLE_SASL: "true"
+  ZOOKEEPER_QUORUM_AUTH_LEARNER_REQUIRE_SASL: "true"
+  ZOOKEEPER_QUORUM_AUTH_LEARNER_SASL_LOGIN_CONTEXT: QuorumLearner
+  ZOOKEEPER_QUORUM_AUTH_SERVER_REQUIRE_SASL: "true"
+  ZOOKEEPER_QUORUM_AUTH_SERVER_SASL_LOGIN_CONTEXT: QuorumServer
+  EXTRA_ARGS: "
+    -Dzookeeper.quorum.cnxn.threads.size=20
+    -Djava.security.auth.login.config=/etc/kafka/zookeeper_jaas.conf 
+    -javaagent:/opt/prometheus-jmx-exporter/jmx_prometheus_javaagent.jar=1234:/opt/prometheus-jmx-exporter/zookeeper.yml
+  "
+x-zk-vols:
+  &zk-vols
+  - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
+  - ./cluster-sasl-digest-md5/zookeeper_jaas.conf:/etc/kafka/zookeeper_jaas.conf
+services:
+  zk1:
+    image: confluentinc/cp-zookeeper:${CP_VERSION}-deb8
+    ports:
+      - 12181:12181
+    environment: *zk-env
+    volumes: *zk-vols
+  zk2: 
+    image: confluentinc/cp-zookeeper:${CP_VERSION}-deb8
+    ports:
+      - 22181:22181
+    environment:
+      << : *zk-env
+      ZOOKEEPER_SERVER_ID: 2
+      ZOOKEEPER_CLIENT_PORT: 22181
+    volumes: *zk-vols
+  zk3:
+    image: confluentinc/cp-zookeeper:${CP_VERSION}-deb8
+    ports:
+      - 32181:32181
+    environment:
+      << : *zk-env
+      ZOOKEEPER_SERVER_ID: 3
+      ZOOKEEPER_CLIENT_PORT: 32181
+    volumes: *zk-vols
+  zk4:
+    image: confluentinc/cp-zookeeper:${CP_VERSION}-deb8
+    ports:
+      - 42181:42181
+    environment:
+      << : *zk-env
+      ZOOKEEPER_SERVER_ID: 4
+      ZOOKEEPER_CLIENT_PORT: 42181
+    volumes:
+      - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
+      - ./cluster-sasl-digest-md5/zookeeper_jaas.conf:/etc/kafka/zookeeper_jaas_bad.conf

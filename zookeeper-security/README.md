@@ -17,7 +17,7 @@ WatchedEvent state:SyncConnected type:None path:null
 [config, quota]
 ```
 
-## Scenario 1: SASL/Digest-MD5 Authentication
+## Scenario 1: SASL/Digest-MD5 Authentication between client and server
 
 Start a Zookeeper with SASL-enabled:
 
@@ -43,13 +43,12 @@ WatchedEvent state:Disconnected type:None path:null
 KeeperErrorCode = ConnectionLoss for /zookeeper
 ```
 
-**But** when authenticating without username/password, i.e. anonymous:
+To avoid an `anonymous` user is able to connect, this variable forces clients to authenticate with SSL:
 
-```bash
-make zk-shell-0
-# ...
-WatchedEvent state:SyncConnected type:None path:null
-[config, quota]
+```
+      ZOOKEEPER_REQUIRE_CLIENT_AUTH_SCHEME: sasl
 ```
 
-Based on this issue, this is the expected behaviour: <https://issues.apache.org/jira/browse/ZOOKEEPER-1736>. ACLs are suppose to fix this.
+## Scenario 2: SASL/Digest-MD5 Authentication between ensemble
+
+

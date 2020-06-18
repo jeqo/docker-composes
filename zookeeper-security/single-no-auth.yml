@@ -1,5 +1,5 @@
 ---
-version: 3
+version: '3.4'
 services:
   zk1:
     image: confluentinc/cp-zookeeper:${CP_VERSION}
