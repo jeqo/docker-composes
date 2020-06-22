@@ -2,11 +2,21 @@
 
 ## Scenario 0: No Authentication
 
-//TODO
+```bash
+make all_0
+```
 
 ## Scenario 1: Client-Server SASL/Plain Authentication
 
-//TODO
+```bash
+make all_1
+```
+
+## Scenario 2: Client-Server SASL/Plain Authentication with ACL
+
+```bash
+make all_2
+```
 
 ## Scenario 2: Inter-Broker SASL/Plain Authentication
 
