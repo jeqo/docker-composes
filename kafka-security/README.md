@@ -18,38 +18,40 @@ make all_1
 make all_2
 ```
 
-## Scenario 2: Inter-Broker SASL/Plain Authentication
+## Scenario 3: Inter-Broker SASL/Plain Authentication
+
+```bash
+make all_3
+```
+
+## Scenario 4: Client-Server SASL/SCRAM Authentication
 
 //TODO
 
-## Scenario 3: Client-Server SASL/SCRAM Authentication
+## Scenario 5: Inter-Broker SASL/SCRAM Authentication
 
 //TODO
 
-## Scenario 4: Inter-Broker SASL/SCRAM Authentication
+## Scerario 6: Client-Server SSL Authentication
 
 //TODO
 
-## Scerario 5: Client-Server SSL Authentication
+## Scenario 7: Inter-Broker SSL Authentication
 
 //TODO
 
-## Scenario 6: Inter-Broker SSL Authentication
+## Scerario 8: Client-Server SASL SCRAM with SSL Authentication
 
 //TODO
 
-## Scerario 7: Client-Server SASL SCRAM with SSL Authentication
+## Scenario 9: Inter-Broker SASL SCRAM with SSL Authentication
 
 //TODO
 
-## Scenario 8: Inter-Broker SASL SCRAM with SSL Authentication
+## Scenario 10: Client-Server SASL/OAUTHBEARER Authentication
 
 //TODO
 
-## Scenario 9: Client-Server SASL/OAUTHBEARER Authentication
-
-//TODO
-
-## Scenario 10: Inter-Broker SASL/OAUTHBEARER Authentication
+## Scenario 11: Inter-Broker SASL/OAUTHBEARER Authentication
 
 //TODO
