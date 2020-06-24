@@ -24,7 +24,6 @@ services:
       KAFKA_CONFLUENT_SUPPORT_METRICS_ENABLE: "false"
       KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
       
-
       KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.auth.SimpleAclAuthorizer
       KAFKA_SUPER_USERS: User:kafkabroker
 

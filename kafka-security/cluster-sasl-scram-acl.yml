@@ -7,8 +7,9 @@ x-kafka-env:
   KAFKA_ZOOKEEPER_CONNECT: zk1:2181
   KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,SASL_PLAINTEXT:SASL_PLAINTEXT,SASL_PLAINTEXT_HOST:SASL_PLAINTEXT
   KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:9092,PLAINTEXT_HOST://localhost:19092,SASL_PLAINTEXT://kafka1:9093,SASL_PLAINTEXT_HOST://localhost:19093
-  KAFKA_SECURITY_INTER_BROKER_PROTOCOL: SASL_PLAINTEXT
+  
   KAFKA_SASL_ENABLED_MECHANISMS: SCRAM-SHA-256
+  KAFKA_SECURITY_INTER_BROKER_PROTOCOL: SASL_PLAINTEXT
   KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL: SCRAM-SHA-256
 
   KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
@@ -17,6 +18,7 @@ x-kafka-env:
   KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
   KAFKA_CONFLUENT_SUPPORT_METRICS_ENABLE: "false"
   KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
+  
   KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.auth.SimpleAclAuthorizer
   KAFKA_SUPER_USERS: User:kafkabroker
 
@@ -35,10 +37,10 @@ services:
     volumes:
       - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
       - ./sasl-scram/kafka_jaas.conf:/etc/kafka/kafka_jaas.conf
-      - ./sasl-acl/super.properties:/etc/kafka/super.properties
-      - ./sasl-acl/admin.properties:/etc/kafka/admin.properties
-      - ./sasl-acl/producer.properties:/etc/kafka/producer.properties
-      - ./sasl-acl/consumer.properties:/etc/kafka/consumer.properties
+      - ./sasl-scram/super.properties:/etc/kafka/super.properties
+      - ./sasl-scram/admin.properties:/etc/kafka/admin.properties
+      - ./sasl-scram/producer.properties:/etc/kafka/producer.properties
+      - ./sasl-scram/consumer.properties:/etc/kafka/consumer.properties
   kafka2:
     image: confluentinc/cp-kafka:${CP_VERSION}
     ports:
