@@ -2,22 +2,6 @@
 ---
 version: '3.4'
 services:
-  zk1:
-    image: confluentinc/cp-zookeeper:${CP_VERSION}
-    ports:
-      - 2181:2181
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-      ZOOKEEPER_AUTH_PROVIDER_SASL: org.apache.zookeeper.server.auth.SASLAuthenticationProvider
-      ZOOKEEPER_REQUIRE_CLIENT_AUTH_SCHEME: sasl
-      EXTRA_ARGS: "
-        -Djava.security.auth.login.config=/etc/kafka/zookeeper_jaas.conf 
-        -javaagent:/opt/prometheus-jmx-exporter/jmx_prometheus_javaagent.jar=1234:/opt/prometheus-jmx-exporter/zookeeper.yml
-      "
-    volumes:
-      - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
-      - ./zk/zookeeper_jaas.conf:/etc/kafka/zookeeper_jaas.conf
   kafka1:
     image: confluentinc/cp-kafka:${CP_VERSION}
     ports:
@@ -51,7 +35,7 @@ services:
     volumes:
       - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
       - ./sasl-plain/kafka_jaas.conf:/etc/kafka/kafka_jaas.conf
-      - ./single-sasl-plain-acl/super.properties:/etc/kafka/super.properties
-      - ./single-sasl-plain-acl/admin.properties:/etc/kafka/admin.properties
-      - ./single-sasl-plain-acl/producer.properties:/etc/kafka/producer.properties
-      - ./single-sasl-plain-acl/consumer.properties:/etc/kafka/consumer.properties
+      - ./sasl-plain/super.properties:/etc/kafka/super.properties
+      - ./sasl-plain/admin.properties:/etc/kafka/admin.properties
+      - ./sasl-plain/producer.properties:/etc/kafka/producer.properties
+      - ./sasl-plain/consumer.properties:/etc/kafka/consumer.properties
