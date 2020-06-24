@@ -8,8 +8,8 @@ x-kafka-env:
   KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,SASL_PLAINTEXT:SASL_PLAINTEXT,SASL_PLAINTEXT_HOST:SASL_PLAINTEXT
   KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:9092,PLAINTEXT_HOST://localhost:19092,SASL_PLAINTEXT://kafka1:9093,SASL_PLAINTEXT_HOST://localhost:19093
   KAFKA_SECURITY_INTER_BROKER_PROTOCOL: SASL_PLAINTEXT
-  KAFKA_SASL_ENABLED_MECHANISMS: PLAIN
-  KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL: PLAIN
+  KAFKA_SASL_ENABLED_MECHANISMS: SCRAM-SHA-256
+  KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL: SCRAM-SHA-256
 
   KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
   KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
@@ -50,11 +50,11 @@ services:
     environment: *kafka-env
     volumes:
       - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
-      - ./sasl-plain/kafka_jaas.conf:/etc/kafka/kafka_jaas.conf
-      - ./sasl-plain-acl/super.properties:/etc/kafka/super.properties
-      - ./sasl-plain-acl/admin.properties:/etc/kafka/admin.properties
-      - ./sasl-plain-acl/producer.properties:/etc/kafka/producer.properties
-      - ./sasl-plain-acl/consumer.properties:/etc/kafka/consumer.properties
+      - ./sasl-scram/kafka_jaas.conf:/etc/kafka/kafka_jaas.conf
+      - ./single-sasl-plain-acl/super.properties:/etc/kafka/super.properties
+      - ./single-sasl-plain-acl/admin.properties:/etc/kafka/admin.properties
+      - ./single-sasl-plain-acl/producer.properties:/etc/kafka/producer.properties
+      - ./single-sasl-plain-acl/consumer.properties:/etc/kafka/consumer.properties
   kafka2:
     image: confluentinc/cp-kafka:${CP_VERSION}
     ports:
@@ -66,7 +66,7 @@ services:
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:9092,PLAINTEXT_HOST://localhost:29092,SASL_PLAINTEXT://kafka2:9093,SASL_PLAINTEXT_HOST://localhost:29093
     volumes:
       - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
-      - ./sasl-plain/kafka_jaas.conf:/etc/kafka/kafka_jaas.conf
+      - ./sasl-scram/kafka_jaas.conf:/etc/kafka/kafka_jaas.conf
 
   kafka3:
     image: confluentinc/cp-kafka:${CP_VERSION}
@@ -79,4 +79,4 @@ services:
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3:9092,PLAINTEXT_HOST://localhost:39092,SASL_PLAINTEXT://kafka3:9093,SASL_PLAINTEXT_HOST://localhost:39093
     volumes:
       - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
-      - ./sasl-plain/kafka_jaas.conf:/etc/kafka/kafka_jaas.conf
+      - ./sasl-scram/kafka_jaas.conf:/etc/kafka/kafka_jaas.conf

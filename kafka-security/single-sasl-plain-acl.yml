@@ -17,7 +17,7 @@ services:
       "
     volumes:
       - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
-      - ./zk-sasl-digest-md5/zookeeper_jaas.conf:/etc/kafka/zookeeper_jaas.conf
+      - ./zk/zookeeper_jaas.conf:/etc/kafka/zookeeper_jaas.conf
   kafka1:
     image: confluentinc/cp-kafka:${CP_VERSION}
     ports:
@@ -50,7 +50,7 @@ services:
       "
     volumes:
       - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
-      - ./single-sasl-plain/kafka_jaas.conf:/etc/kafka/kafka_jaas.conf
+      - ./sasl-plain/kafka_jaas.conf:/etc/kafka/kafka_jaas.conf
       - ./single-sasl-plain-acl/super.properties:/etc/kafka/super.properties
       - ./single-sasl-plain-acl/admin.properties:/etc/kafka/admin.properties
       - ./single-sasl-plain-acl/producer.properties:/etc/kafka/producer.properties
