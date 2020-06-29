@@ -3,6 +3,15 @@ all:
 up_zk:
 	docker-compose -f zk.yml up -d
 
+logs_kafka:
+	docker logs -f kafka-security_kafka1_1
+
+logs_kafka_2:
+	docker logs -f kafka-security_kafka2_1
+
+logs_kafka_3:
+	docker logs -f kafka-security_kafka3_1
+
 wait:
 	sleep 10
 
@@ -38,13 +47,13 @@ scram_clients:
 		--add-config 'SCRAM-SHA-256=[iterations=8192,password=consumer-secret],SCRAM-SHA-512=[iterations=8192,password=consumer-secret]'"
 
 test:
-	docker exec kafka-security_kafka1_1 /bin/sh -c "KAFKA_OPTS='' \
+	docker exec kafka-security_kafka1_1 /bin/sh -c "KAFKA_OPTS='-Djavax.net.debug=handshake' \
 		kafka-producer-perf-test --producer-props bootstrap.servers=localhost:9093 --topic t1 --num-records 100 --record-size 1000 --throughput 10 \
 		--producer.config /etc/kafka/producer.properties"
-	docker exec kafka-security_kafka1_1 /bin/sh -c "KAFKA_OPTS='' \
+	docker exec kafka-security_kafka1_1 /bin/sh -c "KAFKA_OPTS='-Djavax.net.debug=handshake' \
 		kafka-consumer-perf-test --bootstrap-server localhost:9093 --topic t1 --messages 10 --group g1 \
 		--consumer.config /etc/kafka/consumer.properties"
-	docker exec kafka-security_kafka1_1 /bin/sh -c "KAFKA_OPTS='' \
+	docker exec kafka-security_kafka1_1 /bin/sh -c "KAFKA_OPTS='-Djavax.net.debug=handshake' \
 		kafka-topics --bootstrap-server localhost:9093 --describe --topic t1 \
 		--command-config /etc/kafka/admin.properties"
 
@@ -119,3 +128,55 @@ up_6:
 	docker-compose -f zk.yml -f cluster-sasl-scram-acl.yml up -d
 
 all_6: up_zk wait scram_brokers up_6 wait scram_clients acl test down
+
+PASSWORD=test1234
+CA_PASSPHRASE=${PASSWORD}
+
+.PHONY: ca
+ca:
+	rm -rf ./ca
+	mkdir -p ./ca/private
+	openssl req -new -x509 -keyout ca/private/ca.key -out ca/ca.crt -days 365 -nodes -subj "/C=GB/ST=London/L=London/O=Example/CN=ca.example.org" -passin pass:${CA_PASSPHRASE} -passout pass:${CA_PASSPHRASE}
+
+TRUSTSTORE_PASSWORD=${PASSWORD}
+
+truststore:
+	rm -rf ./tls
+	mkdir -p ./tls
+	keytool -keystore ./tls/truststore.p12 -storetype PKCS12 -alias CARoot -import -file ./ca/ca.crt -storepass ${TRUSTSTORE_PASSWORD} -noprompt
+	echo ${TRUSTSTORE_PASSWORD} > ./tls/truststore_credential
+
+BROKER=kafka1
+KEYSTORE_PASSWORD=${PASSWORD}
+KEY_PASSWORD=${PASSWORD}
+
+keystore:
+	rm -f ./tls/${BROKER}.keystore.p12
+	keytool -keystore ./tls/${BROKER}.keystore.p12 -storetype PKCS12 -alias ${BROKER} -dname "C=GB, ST=London, L=London, O=Example, CN=${BROKER}.example.org" -genkey -keyalg RSA -storepass ${KEYSTORE_PASSWORD} -keypass ${KEY_PASSWORD} -noprompt
+	echo ${KEYSTORE_PASSWORD} > ./tls/${BROKER}_keystore_credential
+	keytool -keystore ./tls/${BROKER}.keystore.p12 -alias ${BROKER} -certreq -file tls/${BROKER}.csr -storepass ${KEYSTORE_PASSWORD} -keypass ${KEY_PASSWORD} -noprompt
+	openssl x509 -req -CA ./ca/ca.crt -CAkey ./ca/private/ca.key -in ./tls/${BROKER}.csr -out ./tls/${BROKER}.crt -days 7 -CAcreateserial -passin pass:${KEY_PASSWORD}
+	echo ${KEY_PASSWORD} > ./tls/${BROKER}_key_credential
+	keytool -keystore ./tls/${BROKER}.keystore.p12 -alias CARoot -import -file ./ca/ca.crt -storepass ${KEYSTORE_PASSWORD} -noprompt
+	keytool -keystore ./tls/${BROKER}.keystore.p12 -alias ${BROKER} -import -file ./tls/${BROKER}.crt -storepass ${KEYSTORE_PASSWORD} -noprompt
+
+keystore_cluster:
+	make BROKER=kafka2 keystore
+	make BROKER=kafka3 keystore
+
+test_tls:
+	openssl s_client -debug -connect localhost:9093 -tls1_2
+
+pre_tls: ca truststore keystore
+
+up_7: 
+	docker-compose -f zk.yml -f single-one-way-tls.yml up -d
+
+all_7: up_7 wait test down
+
+pre_tls_cluster: pre_tls keystore_cluster
+
+up_8: 
+	docker-compose -f zk.yml -f cluster-one-way-tls.yml up -d
+
+all_8: up_8 wait test down
