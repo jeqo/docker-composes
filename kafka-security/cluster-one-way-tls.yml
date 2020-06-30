@@ -16,9 +16,10 @@ x-kafka-env:
   KAFKA_SSL_KEYSTORE_CREDENTIALS: kafka1_keystore_credential
   KAFKA_SSL_KEY_CREDENTIALS: kafka1_key_credential
   KAFKA_SSL_TRUSTSTORE_TYPE: PKCS12
-  KAFKA_SSL_TRUSTSTORE_LOCATION: /etc/kafka/secrets/truststore.p12
-  KAFKA_SSL_TRUSTSTORE_PASSWORD: test1234
-  KAFKA_SSL_CLIENT_AUTH: none
+  KAFKA_SSL_TRUSTSTORE_FILENAME: truststore.p12
+  KAFKA_SSL_TRUSTSTORE_CREDENTIALS: truststore_credential
+  KAFKA_SSL_CLIENT_AUTH: requested
+  KAFKA_SSL_ENABLED_PROTOCOLS: TLSv1.2
   KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: " "
 
   KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
@@ -44,10 +45,6 @@ services:
     volumes:
       - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
       - ./no-auth/kafka_jaas.conf:/etc/kafka/kafka_jaas.conf
-      - ./one-way-tls/super.properties:/etc/kafka/super.properties
-      - ./one-way-tls/admin.properties:/etc/kafka/admin.properties
-      - ./one-way-tls/producer.properties:/etc/kafka/producer.properties
-      - ./one-way-tls/consumer.properties:/etc/kafka/consumer.properties
       - ./tls:/etc/kafka/secrets
   kafka2:
     image: confluentinc/cp-kafka:${CP_VERSION}
@@ -83,4 +80,10 @@ services:
     volumes:
       - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
       - ./no-auth/kafka_jaas.conf:/etc/kafka/kafka_jaas.conf
+      - ./tls:/etc/kafka/secrets
+  kafka-client:
+    volumes:
+      - ./one-way-tls/admin.properties:/etc/kafka/admin.properties
+      - ./one-way-tls/producer.properties:/etc/kafka/producer.properties
+      - ./one-way-tls/consumer.properties:/etc/kafka/consumer.properties
       - ./tls:/etc/kafka/secrets

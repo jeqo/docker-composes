@@ -23,7 +23,7 @@ services:
       KAFKA_SSL_TRUSTSTORE_FILENAME: truststore.p12
       KAFKA_SSL_TRUSTSTORE_CREDENTIALS: truststore_credential
       KAFKA_SSL_TRUSTSTORE_LOCATION: /etc/kafka/secrets/truststore.p12
-      KAFKA_SSL_CLIENT_AUTH: requested
+      KAFKA_SSL_CLIENT_AUTH: required
       KAFKA_SSL_ENABLED_PROTOCOLS: TLSv1.2
       KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: ""
 
@@ -45,7 +45,7 @@ services:
       - ./tls:/etc/kafka/secrets
   kafka-client:
     volumes:
-      - ./one-way-tls/admin.properties:/etc/kafka/admin.properties
-      - ./one-way-tls/producer.properties:/etc/kafka/producer.properties
-      - ./one-way-tls/consumer.properties:/etc/kafka/consumer.properties
       - ./tls:/etc/kafka/secrets
+      - ./mutual-tls/admin.properties:/etc/kafka/admin.properties
+      - ./mutual-tls/producer.properties:/etc/kafka/producer.properties
+      - ./mutual-tls/consumer.properties:/etc/kafka/consumer.properties

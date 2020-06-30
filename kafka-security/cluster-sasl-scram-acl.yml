@@ -39,10 +39,6 @@ services:
     volumes:
       - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
       - ./sasl-scram/kafka_jaas.conf:/etc/kafka/kafka_jaas.conf
-      - ./sasl-scram/super.properties:/etc/kafka/super.properties
-      - ./sasl-scram/admin.properties:/etc/kafka/admin.properties
-      - ./sasl-scram/producer.properties:/etc/kafka/producer.properties
-      - ./sasl-scram/consumer.properties:/etc/kafka/consumer.properties
   kafka2:
     image: confluentinc/cp-kafka:${CP_VERSION}
     ports:
@@ -68,3 +64,8 @@ services:
     volumes:
       - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
       - ./sasl-scram/kafka_jaas.conf:/etc/kafka/kafka_jaas.conf
+  kafka-client:
+    volumes:
+      - ./sasl-scram/admin.properties:/etc/kafka/admin.properties
+      - ./sasl-scram/producer.properties:/etc/kafka/producer.properties
+      - ./sasl-scram/consumer.properties:/etc/kafka/consumer.properties

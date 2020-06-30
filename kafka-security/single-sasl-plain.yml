@@ -30,7 +30,8 @@ services:
     volumes:
       - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
       - ./sasl-plain/kafka_jaas.conf:/etc/kafka/kafka_jaas.conf
-      - ./sasl-plain/super.properties:/etc/kafka/super.properties
+  kafka-client:
+    volumes:
       - ./sasl-plain/admin.properties:/etc/kafka/admin.properties
       - ./sasl-plain/producer.properties:/etc/kafka/producer.properties
       - ./sasl-plain/consumer.properties:/etc/kafka/consumer.properties

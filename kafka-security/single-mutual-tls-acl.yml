@@ -10,6 +10,7 @@ services:
       KAFKA_BROKER_ID: 1
       KAFKA_NUM_PARTITIONS: 12
       KAFKA_ZOOKEEPER_CONNECT: zk1:2181
+      KAFKA_ZOOKEEPER_SET_ACL: "true"
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,SSL:SSL,SSL_HOST:SSL
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:19092,PLAINTEXT_HOST://localhost:9092,SSL://kafka1:19093,SSL_HOST://localhost:9093
 
@@ -23,10 +24,13 @@ services:
       KAFKA_SSL_TRUSTSTORE_FILENAME: truststore.p12
       KAFKA_SSL_TRUSTSTORE_CREDENTIALS: truststore_credential
       KAFKA_SSL_TRUSTSTORE_LOCATION: /etc/kafka/secrets/truststore.p12
-      KAFKA_SSL_CLIENT_AUTH: requested
+      KAFKA_SSL_CLIENT_AUTH: required
       KAFKA_SSL_ENABLED_PROTOCOLS: TLSv1.2
       KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: ""
 
+      KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.auth.SimpleAclAuthorizer
+      KAFKA_SUPER_USERS: User:C=GB,ST=London,L=London,O=Example,CN=kafka1.example.org
+      
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
@@ -45,7 +49,8 @@ services:
       - ./tls:/etc/kafka/secrets
   kafka-client:
     volumes:
-      - ./one-way-tls/admin.properties:/etc/kafka/admin.properties
-      - ./one-way-tls/producer.properties:/etc/kafka/producer.properties
-      - ./one-way-tls/consumer.properties:/etc/kafka/consumer.properties
       - ./tls:/etc/kafka/secrets
+      - ./mutual-tls/super.properties:/etc/kafka/super.properties
+      - ./mutual-tls/admin.properties:/etc/kafka/admin.properties
+      - ./mutual-tls/producer.properties:/etc/kafka/producer.properties
+      - ./mutual-tls/consumer.properties:/etc/kafka/consumer.properties

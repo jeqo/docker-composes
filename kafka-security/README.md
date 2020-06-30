@@ -42,29 +42,30 @@ make all_5
 make all_6
 ```
 
-## Scerario 7: Client-Server SSL Authentication
+## Scerario 7: Client-Server SSL Encryption
 
 ```bash
 make pre_tls
 make all_7
 ```
 
-## Scenario 7: Inter-Broker SSL Authentication
+## Scenario 8: Inter-Broker SSL Encryption
 
-//TODO
+```bash
+make pre_tls
+make all_8
+```
 
-## Scerario 8: Client-Server SASL SCRAM with SSL Authentication
+## Scerario 9: Client-Server SSL Authentication
 
-//TODO
+```bash
+make pre_tls
+make all_9
+```
 
-## Scenario 9: Inter-Broker SASL SCRAM with SSL Authentication
+## Scerario 10: Client-Server SSL Authentication with ACL
 
-//TODO
-
-## Scenario 10: Client-Server SASL/OAUTHBEARER Authentication
-
-//TODO
-
-## Scenario 11: Inter-Broker SASL/OAUTHBEARER Authentication
-
-//TODO
+```bash
+make pre_tls
+make all_10
+```

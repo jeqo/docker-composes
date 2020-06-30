@@ -16,14 +16,14 @@ wait:
 	sleep 10
 
 acl:
-	docker exec kafka-security_kafka1_1 /bin/sh -c "KAFKA_OPTS='' \
-		kafka-acls --bootstrap-server localhost:9093 --command-config /etc/kafka/super.properties \
+	docker exec kafka-security_kafka-client_1 /bin/sh -c " \
+		kafka-acls --bootstrap-server kafka1:19093 --command-config /etc/kafka/super.properties \
 		--add --allow-principal User:admin --topic t1 --operation ALL --cluster"
-	docker exec kafka-security_kafka1_1 /bin/sh -c "KAFKA_OPTS='' \
-		kafka-acls --bootstrap-server localhost:9093 --command-config /etc/kafka/super.properties \
+	docker exec kafka-security_kafka-client_1 /bin/sh -c " \
+		kafka-acls --bootstrap-server kafka1:19093 --command-config /etc/kafka/super.properties \
 		--add --allow-principal User:producer --topic t1 --producer"
-	docker exec kafka-security_kafka1_1  /bin/sh -c "KAFKA_OPTS='' \
-		kafka-acls --bootstrap-server localhost:9093 --command-config /etc/kafka/super.properties \
+	docker exec kafka-security_kafka-client_1  /bin/sh -c " \
+		kafka-acls --bootstrap-server kafka1:19093 --command-config /etc/kafka/super.properties \
 		--add --allow-principal User:consumer --topic t1 --consumer --group g1"
 
 scram_brokers:
@@ -47,14 +47,14 @@ scram_clients:
 		--add-config 'SCRAM-SHA-256=[iterations=8192,password=consumer-secret],SCRAM-SHA-512=[iterations=8192,password=consumer-secret]'"
 
 test:
-	docker exec kafka-security_kafka1_1 /bin/sh -c "KAFKA_OPTS='-Djavax.net.debug=handshake' \
-		kafka-producer-perf-test --producer-props bootstrap.servers=localhost:9093 --topic t1 --num-records 100 --record-size 1000 --throughput 10 \
+	docker exec kafka-security_kafka-client_1 /bin/sh -c " \
+		kafka-producer-perf-test --producer-props bootstrap.servers=kafka1:19093 --topic t1 --num-records 100 --record-size 1000 --throughput 10 \
 		--producer.config /etc/kafka/producer.properties"
-	docker exec kafka-security_kafka1_1 /bin/sh -c "KAFKA_OPTS='-Djavax.net.debug=handshake' \
-		kafka-consumer-perf-test --bootstrap-server localhost:9093 --topic t1 --messages 10 --group g1 \
+	docker exec kafka-security_kafka-client_1 /bin/sh -c " \
+		kafka-consumer-perf-test --bootstrap-server kafka1:19093 --topic t1 --messages 10 --group g1 \
 		--consumer.config /etc/kafka/consumer.properties"
-	docker exec kafka-security_kafka1_1 /bin/sh -c "KAFKA_OPTS='-Djavax.net.debug=handshake' \
-		kafka-topics --bootstrap-server localhost:9093 --describe --topic t1 \
+	docker exec kafka-security_kafka-client_1 /bin/sh -c " \
+		kafka-topics --bootstrap-server kafka1:19093 --describe --topic t1 \
 		--command-config /etc/kafka/admin.properties"
 
 down:
@@ -146,23 +146,23 @@ truststore:
 	keytool -keystore ./tls/truststore.p12 -storetype PKCS12 -alias CARoot -import -file ./ca/ca.crt -storepass ${TRUSTSTORE_PASSWORD} -noprompt
 	echo ${TRUSTSTORE_PASSWORD} > ./tls/truststore_credential
 
-BROKER=kafka1
+NODE=kafka1
 KEYSTORE_PASSWORD=${PASSWORD}
 KEY_PASSWORD=${PASSWORD}
 
 keystore:
-	rm -f ./tls/${BROKER}.keystore.p12
-	keytool -keystore ./tls/${BROKER}.keystore.p12 -storetype PKCS12 -alias ${BROKER} -dname "C=GB, ST=London, L=London, O=Example, CN=${BROKER}.example.org" -genkey -keyalg RSA -storepass ${KEYSTORE_PASSWORD} -keypass ${KEY_PASSWORD} -noprompt
-	echo ${KEYSTORE_PASSWORD} > ./tls/${BROKER}_keystore_credential
-	keytool -keystore ./tls/${BROKER}.keystore.p12 -alias ${BROKER} -certreq -file tls/${BROKER}.csr -storepass ${KEYSTORE_PASSWORD} -keypass ${KEY_PASSWORD} -noprompt
-	openssl x509 -req -CA ./ca/ca.crt -CAkey ./ca/private/ca.key -in ./tls/${BROKER}.csr -out ./tls/${BROKER}.crt -days 7 -CAcreateserial -passin pass:${KEY_PASSWORD}
-	echo ${KEY_PASSWORD} > ./tls/${BROKER}_key_credential
-	keytool -keystore ./tls/${BROKER}.keystore.p12 -alias CARoot -import -file ./ca/ca.crt -storepass ${KEYSTORE_PASSWORD} -noprompt
-	keytool -keystore ./tls/${BROKER}.keystore.p12 -alias ${BROKER} -import -file ./tls/${BROKER}.crt -storepass ${KEYSTORE_PASSWORD} -noprompt
+	rm -f ./tls/${NODE}.keystore.p12
+	keytool -keystore ./tls/${NODE}.keystore.p12 -storetype PKCS12 -alias ${NODE} -dname "C=GB, ST=London, L=London, O=Example, CN=${NODE}.example.org" -genkey -keyalg RSA -storepass ${KEYSTORE_PASSWORD} -keypass ${KEY_PASSWORD} -noprompt
+	echo ${KEYSTORE_PASSWORD} > ./tls/${NODE}_keystore_credential
+	keytool -keystore ./tls/${NODE}.keystore.p12 -alias ${NODE} -certreq -file tls/${NODE}.csr -storepass ${KEYSTORE_PASSWORD} -keypass ${KEY_PASSWORD} -noprompt
+	openssl x509 -req -CA ./ca/ca.crt -CAkey ./ca/private/ca.key -in ./tls/${NODE}.csr -out ./tls/${NODE}.crt -days 7 -CAcreateserial -passin pass:${KEY_PASSWORD}
+	echo ${KEY_PASSWORD} > ./tls/${NODE}_key_credential
+	keytool -keystore ./tls/${NODE}.keystore.p12 -alias CARoot -import -file ./ca/ca.crt -storepass ${KEYSTORE_PASSWORD} -noprompt
+	keytool -keystore ./tls/${NODE}.keystore.p12 -alias ${NODE} -import -file ./tls/${NODE}.crt -storepass ${KEYSTORE_PASSWORD} -noprompt
 
 keystore_cluster:
-	make BROKER=kafka2 keystore
-	make BROKER=kafka3 keystore
+	make NODE=kafka2 keystore
+	make NODE=kafka3 keystore
 
 test_tls:
 	openssl s_client -debug -connect localhost:9093 -tls1_2
@@ -180,3 +180,31 @@ up_8:
 	docker-compose -f zk.yml -f cluster-one-way-tls.yml up -d
 
 all_8: up_8 wait test down
+
+keystore_clients:
+	make NODE=admin keystore
+	make NODE=consumer keystore
+	make NODE=producer keystore
+
+pre_mtls: ca truststore keystore keystore_clients
+
+up_9: 
+	docker-compose -f zk.yml -f single-mutual-tls.yml up -d
+
+all_9: up_9 wait test down
+
+acl_mtls:
+	docker exec kafka-security_kafka-client_1 /bin/sh -c " \
+		kafka-acls --bootstrap-server kafka1:19093 --command-config /etc/kafka/super.properties \
+		--add --allow-principal User:C=GB,ST=London,L=London,O=Example,CN=admin.example.org --topic t1 --operation ALL --cluster"
+	docker exec kafka-security_kafka-client_1 /bin/sh -c " \
+		kafka-acls --bootstrap-server kafka1:19093 --command-config /etc/kafka/super.properties \
+		--add --allow-principal User:C=GB,ST=London,L=London,O=Example,CN=producer.example.org --topic t1 --producer"
+	docker exec kafka-security_kafka-client_1  /bin/sh -c " \
+		kafka-acls --bootstrap-server kafka1:19093 --command-config /etc/kafka/super.properties \
+		--add --allow-principal User:C=GB,ST=London,L=London,O=Example,CN=consumer.example.org --topic t1 --consumer --group g1"
+
+up_10: 
+	docker-compose -f zk.yml -f single-mutual-tls-acl.yml up -d
+
+all_10: up_10 wait test down
