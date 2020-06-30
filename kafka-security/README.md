@@ -69,3 +69,10 @@ make all_9
 make pre_tls
 make all_10
 ```
+
+## Scerario 11: Cluster SSL Authentication with ACL
+
+```bash
+make pre_tls_cluster
+make all_11
+```
