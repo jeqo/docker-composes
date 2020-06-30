@@ -18,9 +18,12 @@ x-kafka-env:
   KAFKA_SSL_TRUSTSTORE_TYPE: PKCS12
   KAFKA_SSL_TRUSTSTORE_FILENAME: truststore.p12
   KAFKA_SSL_TRUSTSTORE_CREDENTIALS: truststore_credential
-  KAFKA_SSL_CLIENT_AUTH: requested
+  KAFKA_SSL_CLIENT_AUTH: required
   KAFKA_SSL_ENABLED_PROTOCOLS: TLSv1.2
   KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: " "
+
+  KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.auth.SimpleAclAuthorizer
+  KAFKA_SUPER_USERS: User:C=GB,ST=London,L=London,O=Example,CN=kafka1.example.org;User:C=GB,ST=London,L=London,O=Example,CN=kafka2.example.org;User:C=GB,ST=London,L=London,O=Example,CN=kafka3.example.org
 
   KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
   KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
@@ -49,8 +52,8 @@ services:
   kafka2:
     image: confluentinc/cp-kafka:${CP_VERSION}
     ports:
-      - 29092:29092
-      - 29093:29093
+      - 29092:9092
+      - 29093:9093
     environment: 
       << : *kafka-env
       KAFKA_BROKER_ID: 2
@@ -83,7 +86,8 @@ services:
       - ./tls:/etc/kafka/secrets
   kafka-client:
     volumes:
-      - ./one-way-tls/admin.properties:/etc/kafka/admin.properties
-      - ./one-way-tls/producer.properties:/etc/kafka/producer.properties
-      - ./one-way-tls/consumer.properties:/etc/kafka/consumer.properties
+      - ./mutual-tls/super.properties:/etc/kafka/super.properties
+      - ./mutual-tls/admin.properties:/etc/kafka/admin.properties
+      - ./mutual-tls/producer.properties:/etc/kafka/producer.properties
+      - ./mutual-tls/consumer.properties:/etc/kafka/consumer.properties
       - ./tls:/etc/kafka/secrets

@@ -207,4 +207,11 @@ acl_mtls:
 up_10: 
 	docker-compose -f zk.yml -f single-mutual-tls-acl.yml up -d
 
-all_10: up_10 wait test down
+all_10: up_10 wait acl_mtls test down
+
+pre_mtls_cluster: pre_mtls keystore_cluster
+
+up_11: 
+	docker-compose -f zk.yml -f cluster-mutual-tls-acl.yml up -d
+
+all_11: up_11 wait acl_mtls test down

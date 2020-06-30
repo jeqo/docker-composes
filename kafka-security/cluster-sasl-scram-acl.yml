@@ -8,7 +8,7 @@ x-kafka-env:
   KAFKA_DEFAULT_REPLICATION_FACTOR: 3
   KAFKA_ZOOKEEPER_CONNECT: zk1:2181
   KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,SASL_PLAINTEXT:SASL_PLAINTEXT,SASL_PLAINTEXT_HOST:SASL_PLAINTEXT
-  KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:9092,PLAINTEXT_HOST://localhost:19092,SASL_PLAINTEXT://kafka1:9093,SASL_PLAINTEXT_HOST://localhost:19093
+  KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:19092,PLAINTEXT_HOST://localhost:9092,SASL_PLAINTEXT://kafka1:19093,SASL_PLAINTEXT_HOST://localhost:9093
   
   KAFKA_SASL_ENABLED_MECHANISMS: SCRAM-SHA-256
   KAFKA_SECURITY_INTER_BROKER_PROTOCOL: SASL_PLAINTEXT
@@ -33,8 +33,8 @@ services:
   kafka1:
     image: confluentinc/cp-kafka:${CP_VERSION}
     ports:
-      - 19092:19092
-      - 19093:19093
+      - 19092:9092
+      - 19093:9093
     environment: *kafka-env
     volumes:
       - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
@@ -42,12 +42,12 @@ services:
   kafka2:
     image: confluentinc/cp-kafka:${CP_VERSION}
     ports:
-      - 29092:29092
-      - 29093:29093
+      - 29092:9092
+      - 29093:9093
     environment: 
       << : *kafka-env
       KAFKA_BROKER_ID: 2
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:9092,PLAINTEXT_HOST://localhost:29092,SASL_PLAINTEXT://kafka2:9093,SASL_PLAINTEXT_HOST://localhost:29093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:19092,PLAINTEXT_HOST://localhost:9092,SASL_PLAINTEXT://kafka2:19093,SASL_PLAINTEXT_HOST://localhost:9093
     volumes:
       - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
       - ./sasl-scram/kafka_jaas.conf:/etc/kafka/kafka_jaas.conf
@@ -55,12 +55,12 @@ services:
   kafka3:
     image: confluentinc/cp-kafka:${CP_VERSION}
     ports:
-      - 39092:39092
-      - 39093:39093
+      - 39092:9092
+      - 39093:9093
     environment: 
       << : *kafka-env
       KAFKA_BROKER_ID: 3
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3:9092,PLAINTEXT_HOST://localhost:39092,SASL_PLAINTEXT://kafka3:9093,SASL_PLAINTEXT_HOST://localhost:39093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3:19092,PLAINTEXT_HOST://localhost:9092,SASL_PLAINTEXT://kafka3:19093,SASL_PLAINTEXT_HOST://localhost:9093
     volumes:
       - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
       - ./sasl-scram/kafka_jaas.conf:/etc/kafka/kafka_jaas.conf
