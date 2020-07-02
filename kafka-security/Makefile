@@ -225,3 +225,8 @@ up_cluster_sasl_scram_tls_acl:
 	docker-compose -f zk.yml -f cluster-sasl-scram-ssl-acl.yml up -d
 
 all_cluster_sasl_scram_tls_acl: pre_tls_cluster up_zk scram_brokers up_cluster_sasl_scram_tls_acl wait scram_clients acl test down
+
+up_cluster_sasl_scram_mtls_acl: 
+	docker-compose -f zk.yml -f cluster-sasl-scram-mtls-acl.yml up -d
+
+all_cluster_sasl_scram_mtls_acl: pre_mtls_cluster up_zk scram_brokers up_cluster_sasl_scram_mtls_acl wait scram_clients acl test down

@@ -71,3 +71,21 @@ make all_single_mtls_acl
 ```bash
 make all_cluster_mtls_acl
 ```
+
+## Scerario 12: Cluster SASL/Plain SSL-encrypted Authentication with ACL
+
+```bash
+make all_cluster_plain_ssl_acl
+```
+
+## Scerario 13: Cluster SASL/SCRAM SSL-encrypted Authentication with ACL
+
+```bash
+make all_cluster_scram_ssl_acl
+```
+
+## Scerario 14: Cluster SASL/SCRAM mutual-TLS-encrypted Authentication with ACL
+
+```bash
+make all_cluster_scram_mtls_acl
+```

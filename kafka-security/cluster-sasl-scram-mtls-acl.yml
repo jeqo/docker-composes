@@ -1,0 +1,96 @@
+---
+version: '3.4'
+x-kafka-env:
+  &kafka-env
+  KAFKA_ZOOKEEPER_CONNECT: zk1:2181
+  KAFKA_NUM_PARTITIONS: 12
+  KAFKA_DEFAULT_REPLICATION_FACTOR: 3
+  KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,SASL_SSL:SASL_SSL,SASL_SSL_HOST:SASL_SSL
+  
+  KAFKA_SASL_ENABLED_MECHANISMS: SCRAM-SHA-512
+  KAFKA_SECURITY_INTER_BROKER_PROTOCOL: SASL_SSL
+  KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL: SCRAM-SHA-512
+
+  KAFKA_SSL_KEYSTORE_TYPE: PKCS12
+  KAFKA_SSL_TRUSTSTORE_TYPE: PKCS12
+  KAFKA_SSL_TRUSTSTORE_FILENAME: truststore.p12
+  KAFKA_SSL_TRUSTSTORE_CREDENTIALS: truststore_credential
+  KAFKA_SSL_CLIENT_AUTH: required
+  KAFKA_SSL_ENABLED_PROTOCOLS: TLSv1.2
+  KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: " "
+
+  KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.auth.SimpleAclAuthorizer
+  KAFKA_SUPER_USERS: User:kafkabroker
+
+  KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+  KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+  KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+  KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+  KAFKA_CONFLUENT_SUPPORT_METRICS_ENABLE: "false"
+  KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
+
+  KAFKA_OPTS: "
+    -Djavax.net.debug=handshake
+    -Djava.security.auth.login.config=/etc/kafka/kafka_jaas.conf 
+    -javaagent:/opt/prometheus-jmx-exporter/jmx_prometheus_javaagent.jar=1234:/opt/prometheus-jmx-exporter/kafka-broker.yaml
+  "
+
+x-kafka-vols:
+  &kafka-vols
+  - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
+  - ./sasl-scram-mtls/kafka_jaas.conf:/etc/kafka/kafka_jaas.conf
+  - ./tls:/etc/kafka/secrets
+
+services:
+  kafka1:
+    image: confluentinc/cp-kafka:${CP_VERSION}
+    ports:
+      - 19092:9092
+      - 19093:9093
+    environment: 
+      << : *kafka-env
+      KAFKA_BROKER_ID: 1
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:19092,PLAINTEXT_HOST://localhost:9092,SASL_SSL://kafka1:19093,SASL_SSL_HOST://localhost:9093
+
+      KAFKA_SSL_KEYSTORE_FILENAME: kafka1.keystore.p12
+      KAFKA_SSL_KEYSTORE_CREDENTIALS: kafka1_keystore_credential
+      KAFKA_SSL_KEY_CREDENTIALS: kafka1_key_credential
+    volumes: *kafka-vols
+
+  kafka2:
+    image: confluentinc/cp-kafka:${CP_VERSION}
+    ports:
+      - 29092:29092
+      - 29093:29093
+    environment: 
+      << : *kafka-env
+      KAFKA_BROKER_ID: 2
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:19092,PLAINTEXT_HOST://localhost:29092,SASL_SSL://kafka2:19093,SASL_SSL_HOST://localhost:29093
+
+      KAFKA_SSL_KEYSTORE_FILENAME: kafka2.keystore.p12
+      KAFKA_SSL_KEYSTORE_CREDENTIALS: kafka2_keystore_credential
+      KAFKA_SSL_KEY_CREDENTIALS: kafka2_key_credential
+    volumes: *kafka-vols
+
+  kafka3:
+    image: confluentinc/cp-kafka:${CP_VERSION}
+    ports:
+      - 39092:39092
+      - 39093:39093
+    environment: 
+      << : *kafka-env
+      KAFKA_BROKER_ID: 3
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3:19092,PLAINTEXT_HOST://localhost:39092,SASL_SSL://kafka3:19093,SASL_SSL_HOST://localhost:39093
+      
+      KAFKA_SSL_KEYSTORE_FILENAME: kafka3.keystore.p12
+      KAFKA_SSL_KEYSTORE_CREDENTIALS: kafka3_keystore_credential
+      KAFKA_SSL_KEY_CREDENTIALS: kafka3_key_credential
+    volumes: *kafka-vols
+    
+  kafka-client:
+    volumes:
+      - ./sasl-scram-mtls/super.properties:/etc/kafka/super.properties
+      - ./sasl-scram-mtls/admin.properties:/etc/kafka/admin.properties
+      - ./sasl-scram-mtls/producer.properties:/etc/kafka/producer.properties
+      - ./sasl-scram-mtls/consumer.properties:/etc/kafka/consumer.properties
+      - ./tls:/etc/kafka/secrets
