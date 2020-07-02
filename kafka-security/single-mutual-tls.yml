@@ -41,11 +41,12 @@ services:
       "
     volumes:
       - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
-      - ./no-auth/kafka_jaas.conf:/etc/kafka/kafka_jaas.conf
+      - ./mutual-tls/kafka_jaas.conf:/etc/kafka/kafka_jaas.conf
       - ./tls:/etc/kafka/secrets
   kafka-client:
     volumes:
       - ./tls:/etc/kafka/secrets
+      - ./mutual-tls/super.properties:/etc/kafka/super.properties
       - ./mutual-tls/admin.properties:/etc/kafka/admin.properties
       - ./mutual-tls/producer.properties:/etc/kafka/producer.properties
       - ./mutual-tls/consumer.properties:/etc/kafka/consumer.properties

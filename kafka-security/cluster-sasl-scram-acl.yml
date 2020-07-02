@@ -3,12 +3,10 @@
 version: '3.4'
 x-kafka-env:
   &kafka-env
-  KAFKA_BROKER_ID: 1
   KAFKA_NUM_PARTITIONS: 12
   KAFKA_DEFAULT_REPLICATION_FACTOR: 3
   KAFKA_ZOOKEEPER_CONNECT: zk1:2181
   KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,SASL_PLAINTEXT:SASL_PLAINTEXT,SASL_PLAINTEXT_HOST:SASL_PLAINTEXT
-  KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:19092,PLAINTEXT_HOST://localhost:9092,SASL_PLAINTEXT://kafka1:19093,SASL_PLAINTEXT_HOST://localhost:9093
   
   KAFKA_SASL_ENABLED_MECHANISMS: SCRAM-SHA-256
   KAFKA_SECURITY_INTER_BROKER_PROTOCOL: SASL_PLAINTEXT
@@ -29,16 +27,21 @@ x-kafka-env:
     -javaagent:/opt/prometheus-jmx-exporter/jmx_prometheus_javaagent.jar=1234:/opt/prometheus-jmx-exporter/kafka-broker.yaml
   "
 
+x-kafka-vols:
+  &kafka-vols
+  - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
+  - ./sasl-scram/kafka_jaas.conf:/etc/kafka/kafka_jaas.conf
 services:
   kafka1:
     image: confluentinc/cp-kafka:${CP_VERSION}
     ports:
       - 19092:9092
       - 19093:9093
-    environment: *kafka-env
-    volumes:
-      - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
-      - ./sasl-scram/kafka_jaas.conf:/etc/kafka/kafka_jaas.conf
+    environment: 
+      << : *kafka-env
+      KAFKA_BROKER_ID: 1
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:19092,PLAINTEXT_HOST://localhost:9092,SASL_PLAINTEXT://kafka1:19093,SASL_PLAINTEXT_HOST://localhost:9093
+    volumes: *kafka-vols
   kafka2:
     image: confluentinc/cp-kafka:${CP_VERSION}
     ports:
@@ -48,9 +51,7 @@ services:
       << : *kafka-env
       KAFKA_BROKER_ID: 2
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:19092,PLAINTEXT_HOST://localhost:9092,SASL_PLAINTEXT://kafka2:19093,SASL_PLAINTEXT_HOST://localhost:9093
-    volumes:
-      - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
-      - ./sasl-scram/kafka_jaas.conf:/etc/kafka/kafka_jaas.conf
+    volumes: *kafka-vols
 
   kafka3:
     image: confluentinc/cp-kafka:${CP_VERSION}
@@ -61,11 +62,11 @@ services:
       << : *kafka-env
       KAFKA_BROKER_ID: 3
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3:19092,PLAINTEXT_HOST://localhost:9092,SASL_PLAINTEXT://kafka3:19093,SASL_PLAINTEXT_HOST://localhost:9093
-    volumes:
-      - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
-      - ./sasl-scram/kafka_jaas.conf:/etc/kafka/kafka_jaas.conf
+    volumes: *kafka-vols
+  
   kafka-client:
     volumes:
+      - ./sasl-scram/super.properties:/etc/kafka/super.properties
       - ./sasl-scram/admin.properties:/etc/kafka/admin.properties
       - ./sasl-scram/producer.properties:/etc/kafka/producer.properties
       - ./sasl-scram/consumer.properties:/etc/kafka/consumer.properties

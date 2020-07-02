@@ -1,7 +1,7 @@
 all:
 
 up_zk:
-	docker-compose -f zk.yml up -d
+	docker-compose -f zk.yml up -d zk1
 
 logs_kafka:
 	docker logs -f kafka-security_kafka1_1
@@ -13,7 +13,7 @@ logs_kafka_3:
 	docker logs -f kafka-security_kafka3_1
 
 wait:
-	sleep 10
+	sleep 15
 
 acl:
 	docker exec kafka-security_kafka-client_1 /bin/sh -c " \
@@ -60,10 +60,10 @@ test:
 down:
 	docker-compose -f zk.yml down --remove-orphans
 
-up_0:
+up_no_auth:
 	docker-compose -f zk.yml -f single-no-auth.yml up -d
 
-test_0:
+test_no_auth:
 	docker exec kafka-security_kafka1_1 /bin/sh -c "KAFKA_OPTS='' \
 		kafka-topics --bootstrap-server localhost:9092 --create --topic t1 --partitions 12 --replication-factor 1"
 	docker exec kafka-security_kafka1_1 /bin/sh -c "KAFKA_OPTS='' \
@@ -76,58 +76,58 @@ test_kafkacat_0:
 	echo 'test' | kafkacat -b localhost:9092 -P -t t1
 	kafkacat -b localhost:9092 -C -t t1 -c 1
 
-all_0: up_0 wait test_0 down
+all_no_auth: up_no_auth wait test_no_auth down
 
-up_1:
+up_single_sasl_plain:
 	docker-compose -f zk.yml -f single-sasl-plain.yml up -d
 
 
-test_kafkacat_1:
+test_kafkacat_single_sasl_plain:
 	kafkacat -b localhost:9093 -L -X security.protocol=SASL_PLAINTEXT -X sasl.mechanism=PLAIN -X sasl.username=admin -X sasl.password=admin-secret
 	echo 'test' | kafkacat -b localhost:9093 -P -t t1 -X security.protocol=SASL_PLAINTEXT -X sasl.mechanism=PLAIN -X sasl.username=producer -X sasl.password=producer-secret
 	kafkacat -b localhost:9093 -C -t t1 -c 1 -X security.protocol=SASL_PLAINTEXT -X sasl.mechanism=PLAIN -X sasl.username=consumer -X sasl.password=consumer-secret
 
-all_1: up_1 wait test down
+all_single_sasl_plain: up_single_sasl_plain wait test down
 
-up_2:
+up_single_sasl_plain_acl:
 	docker-compose -f zk.yml -f single-sasl-plain-acl.yml up -d
 
-test_kafkacat_2:
+test_kafkacat_single_sasl_plain_acl:
 	kafkacat -b localhost:9093 -L -X security.protocol=SASL_PLAINTEXT -X sasl.mechanism=PLAIN -X sasl.username=admin -X sasl.password=admin-secret
 	echo 'test' | kafkacat -b localhost:9093 -P -t t1 -X security.protocol=SASL_PLAINTEXT -X sasl.mechanism=PLAIN -X sasl.username=producer -X sasl.password=producer-secret
 	kafkacat -b localhost:9093 -C -t t1 -c 1 -X security.protocol=SASL_PLAINTEXT -X sasl.mechanism=PLAIN -X sasl.username=consumer -X sasl.password=consumer-secret
 
-all_2: up_2 wait acl test down
+all_single_sasl_plain_acl: up_single_sasl_plain_acl wait acl test down
 
-up_3:
+up_cluster_sasl_plain_acl:
 	docker-compose -f zk.yml -f cluster-sasl-plain-acl.yml up -d
 
-test_kafkacat_3:
+test_kafkacat_cluster_sasl_plain_acl:
 	kafkacat -b localhost:19093 -L -X security.protocol=SASL_PLAINTEXT -X sasl.mechanism=PLAIN -X sasl.username=admin -X sasl.password=admin-secret
 	echo 'test' | kafkacat -b localhost:29093 -P -t t1 -X security.protocol=SASL_PLAINTEXT -X sasl.mechanism=PLAIN -X sasl.username=producer -X sasl.password=producer-secret
 	kafkacat -b localhost:39093 -C -t t1 -c 1 -X security.protocol=SASL_PLAINTEXT -X sasl.mechanism=PLAIN -X sasl.username=consumer -X sasl.password=consumer-secret
 
-all_3: up_3 wait acl test down
+all_cluster_sasl_plain_acl: up_cluster_sasl_plain_acl wait acl test down
 
-up_4:
+up_single_sasl_scram:
 	docker-compose -f zk.yml -f single-sasl-scram.yml up -d
 
-test_kafkacat_4:
+test_kafkacat_single_sasl_scram:
 	kafkacat -b localhost:9093 -L -X security.protocol=SASL_PLAINTEXT -X sasl.mechanism=SCRAM-SHA-256 -X sasl.username=admin -X sasl.password=admin-secret
 	echo 'test' | kafkacat -b localhost:9093 -P -t t1 -X security.protocol=SASL_PLAINTEXT -X sasl.mechanism=SCRAM-SHA-256 -X sasl.username=producer -X sasl.password=producer-secret
 	kafkacat -b localhost:9093 -C -t t1 -c 1 -X security.protocol=SASL_PLAINTEXT -X sasl.mechanism=SCRAM-SHA-256 -X sasl.username=consumer -X sasl.password=consumer-secret
 
-all_4: up_4 wait scram_clients test down
+all_single_sasl_scram: up_single_sasl_scram wait scram_clients test down
 
-up_5:
+up_single_sasl_scram_acl:
 	docker-compose -f zk.yml -f single-sasl-scram-acl.yml up -d
 
-all_5: up_5 wait scram_brokers scram_clients acl test down
+all_single_sasl_scram_acl: up_single_sasl_scram_acl wait scram_brokers scram_clients acl test down
 
-up_6:
+up_cluster_sasl_scram_acl:
 	docker-compose -f zk.yml -f cluster-sasl-scram-acl.yml up -d
 
-all_6: up_zk wait scram_brokers up_6 wait scram_clients acl test down
+all_cluster_sasl_scram_acl: up_zk wait scram_brokers up_cluster_sasl_scram_acl wait scram_clients acl test down
 
 PASSWORD=test1234
 CA_PASSPHRASE=${PASSWORD}
@@ -169,17 +169,17 @@ test_tls:
 
 pre_tls: ca truststore keystore
 
-up_7: 
+up_single_tls:
 	docker-compose -f zk.yml -f single-one-way-tls.yml up -d
 
-all_7: up_7 wait test down
+all_single_tls: pre_tls up_single_tls wait test down
 
 pre_tls_cluster: pre_tls keystore_cluster
 
-up_8: 
+up_cluster_tls:
 	docker-compose -f zk.yml -f cluster-one-way-tls.yml up -d
 
-all_8: up_8 wait test down
+all_cluster_tls: pre_tls_cluster up_cluster_tls wait test down
 
 keystore_clients:
 	make NODE=admin keystore
@@ -188,10 +188,10 @@ keystore_clients:
 
 pre_mtls: ca truststore keystore keystore_clients
 
-up_9: 
+up_single_mtls:
 	docker-compose -f zk.yml -f single-mutual-tls.yml up -d
 
-all_9: up_9 wait test down
+all_single_mtls: pre_mtls up_single_mtls wait test down
 
 acl_mtls:
 	docker exec kafka-security_kafka-client_1 /bin/sh -c " \
@@ -204,14 +204,24 @@ acl_mtls:
 		kafka-acls --bootstrap-server kafka1:19093 --command-config /etc/kafka/super.properties \
 		--add --allow-principal User:C=GB,ST=London,L=London,O=Example,CN=consumer.example.org --topic t1 --consumer --group g1"
 
-up_10: 
+up_single_mtls_acl:
 	docker-compose -f zk.yml -f single-mutual-tls-acl.yml up -d
 
-all_10: up_10 wait acl_mtls test down
+all_single_mtls_acl: pre_mtls up_single_mtls_acl wait acl_mtls test down
 
 pre_mtls_cluster: pre_mtls keystore_cluster
 
-up_11: 
+up_cluster_mtls_acl: 
 	docker-compose -f zk.yml -f cluster-mutual-tls-acl.yml up -d
 
-all_11: up_11 wait acl_mtls test down
+all_cluster_mtls_acl: pre_mtls_cluster up_cluster_mtls_acl wait acl_mtls test down
+
+up_cluster_sasl_plain_tls_acl: 
+	docker-compose -f zk.yml -f cluster-sasl-plain-ssl-acl.yml up -d
+
+all_cluster_sasl_plain_tls_acl: pre_tls_cluster up_cluster_sasl_plain_tls_acl wait acl test down
+
+up_cluster_sasl_scram_tls_acl: 
+	docker-compose -f zk.yml -f cluster-sasl-scram-ssl-acl.yml up -d
+
+all_cluster_sasl_scram_tls_acl: pre_tls_cluster up_zk scram_brokers up_cluster_sasl_scram_tls_acl wait scram_clients acl test down
