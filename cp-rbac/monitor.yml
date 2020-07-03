@@ -1,5 +1,5 @@
 ---
-version: '3'
+version: '3.4'
 services:
   prometheus:
     image: prom/prometheus:v2.18.1
@@ -22,7 +22,6 @@ services:
     image: lightbend/kafka-lag-exporter:0.6.2
     volumes:
       - ./../kafka-lag-exporter:/opt/docker/conf
-      # - ./prometheus/security:/etc/kafka/secrets
   grafana:
     image: grafana/grafana:7.0.1
     environment:
@@ -30,4 +29,4 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - ./../grafana/provisioning/:/etc/grafana/provisioning/
+      - ./../grafana/:/etc/grafana/provisioning/
