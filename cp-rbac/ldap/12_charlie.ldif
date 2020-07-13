@@ -7,7 +7,7 @@ sn: Sheen
 givenName: Charlie
 cn: charlie
 displayName: Charlie Sheen
-uidNumber: 10002
+uidNumber: 10001
 gidNumber: 5000
 userPassword: charlie-secret
 gecos: charlie

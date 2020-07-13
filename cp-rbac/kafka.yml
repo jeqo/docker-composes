@@ -43,7 +43,7 @@ x-kafka-env:
                                                        publicKeyPath="/tmp/conf/public.pem";
   
   KAFKA_AUTHORIZER_CLASS_NAME: io.confluent.kafka.security.authorizer.ConfluentServerAuthorizer
-  KAFKA_SUPER_USERS: User:admin;User:mds;User:alice
+  KAFKA_SUPER_USERS: User:admin;User:mds;User:superUser
   
   KAFKA_CONFLUENT_METADATA_BOOTSTRAP_SERVERS: BROKER://localhost:9092
   KAFKA_CONFLUENT_METADATA_SASL_MECHANISM: PLAIN

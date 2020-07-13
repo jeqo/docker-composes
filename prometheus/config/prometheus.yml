@@ -33,6 +33,9 @@ scrape_configs:
     static_configs:
     - targets:
       - 'kafka:1234'
+      - 'kafka1:1234'
+      - 'kafka2:1234'
+      - 'kafka3:1234'
       labels:
         env: 'dev'
 

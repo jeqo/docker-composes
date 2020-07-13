@@ -1,4 +1,4 @@
-all:
+all: keys
 
 keys:
 	rm -rf conf
@@ -7,12 +7,36 @@ keys:
 	openssl rsa -in ./conf/keypair.pem -outform PEM -pubout -out ./conf/public.pem
 
 down:
-	docker-compose -f cp.yml down --remove-orphans
+	docker-compose -f ldap.yml down --remove-orphans
 
-up:
-	docker-compose -f ldap.yml -f cp.yml -f monitor.yml up -d
+up_kafka:
+	docker-compose -f ldap.yml -f kafka.yml -f monitor.yml up -d
+
+up_sr:
+	docker-compose -f ldap.yml -f kafka.yml -f sr.yml up -d
+
+get_cluster_id:
+	curl -s http://localhost:8091/v1/metadata/id | jq -r ".id"
+
+rbac_sr:
+	${CONFLUENT_HOME}/bin/confluent iam rolebinding create \
+		--role SecurityAdmin \
+		--principal User:schemaregistryUser \
+		--kafka-cluster-id ${KAFKA_CLUSTER_ID} \
+		--schema-registry-cluster-id schema-registry
+	${CONFLUENT_HOME}/bin/confluent iam rolebinding create \
+		--role ResourceOwner \
+		--principal User:schemaregistryUser \
+		--kafka-cluster-id ${KAFKA_CLUSTER_ID} \
+		--resource Group:schema-registry
+	${CONFLUENT_HOME}/bin/confluent iam rolebinding create \
+		--role ResourceOwner \
+		--principal User:schemaregistryUser \
+		--kafka-cluster-id ${KAFKA_CLUSTER_ID} \
+		--resource Topic:_schemas
+
 ps:
-	docker-compose -f ldap.yml -f cp.yml -f monitor.yml ps
+	docker-compose -f ldap.yml -f kafka.yml -f sr.yml -f monitor.yml ps
 
 logs:
-	docker-compose -f ldap.yml -f cp.yml -f monitor.yml logs -f ${SVC}
+	docker-compose -f ldap.yml -f kafka.yml -f monitor.yml logs -f ${SVC}
