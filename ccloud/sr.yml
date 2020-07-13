@@ -1,0 +1,28 @@
+---
+version: '3.4'
+services: 
+  sr1:
+    image: confluentinc/cp-schema-registry:${CP_VERSION}
+    ports: 
+      - 8081:8081
+    environment: 
+      # # If set to true, API requests that fail will include extra debugging information, including stack traces.
+      # debug=false
+      SCHEMA_REGISTRY_DEBUG: 'false'
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+      SCHEMA_REGISTRY_HOST_NAME: sr1
+      # SCHEMA_REGISTRY_GROUP_ID: cp-schema-registry
+
+      SCHEMA_REGISTRY_LOG4J_ROOT_LOGLEVEL: INFO
+      SCHEMA_REGISTRY_KAFKASTORE_TOPIC: _schemas_cp
+      
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: SASL_SSL://pkc-41wq6.eu-west-2.aws.confluent.cloud:9092 
+      
+      SCHEMA_REGISTRY_KAFKASTORE_SECURITY_PROTOCOL: SASL_SSL
+      SCHEMA_REGISTRY_KAFKASTORE_SASL_MECHANISM: PLAIN
+      SCHEMA_REGISTRY_KAFKASTORE_SASL_JAAS_CONFIG:   
+      SCHEMA_REGISTRY_KAFKASTORE_SASL_JAAS_CONFIG: |
+        org.apache.kafka.common.security.plain.PlainLoginModule required \
+        username="${CCLOUD_SR_API_KEY}" \
+        password="${CCLOUD_SR_API_SECRET}";
+      SCHEMA_REGISTRY_KAFKASTORE_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: https

@@ -1,0 +1,23 @@
+---
+version: '3.4'
+services: 
+  rest1:
+    image: confluentinc/cp-kafka-rest:${CP_VERSION}
+    ports: 
+      - 8082:8082
+    environment:
+      KAFKA_REST_LISTENER: http://0.0.0.0:8082
+      KAFKA_REST_HOST_NAME: rest1
+
+      KAFKA_REST_BOOTSTRAP_SERVERS: SASL_SSL://pkc-41wq6.eu-west-2.aws.confluent.cloud:9092
+      KAFKA_REST_SECURITY_PROTOCOL: SASL_SSL
+      KAFKA_REST_SASL_MECHANISM: PLAIN
+      
+      KAFKA_REST_CLIENT_SECURITY_PROTOCOL: SASL_SSL
+      KAFKA_REST_CLIENT_SASL_MECHANISM: PLAIN
+      KAFKA_REST_CLIENT_SASL_JAAS_CONFIG: org.apache.kafka.common.security.plain.PlainLoginModule \
+        required username="${CCLOUD_REST_API_KEY}" password="${CCLOUD_REST_API_SECRET}"; 
+      
+      KAFKA_REST_CLIENT_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: https
+      
+      KAFKA_REST_SCHEMA_REGISTRY_URL: http://sr1:8081

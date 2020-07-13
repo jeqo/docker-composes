@@ -46,6 +46,13 @@ scrape_configs:
       labels:
         env: 'dev'
 
+  - job_name: 'ccloudexporter'
+    scrape_interval: 60s
+    scrape_timeout: 30s
+    honor_timestamps: true
+    static_configs:
+      - targets: ['ccloud_exporter:2112']
+
 # No producer for the moment in cp-demo
 #  - job_name: 'producer'
 #    static_configs:
