@@ -42,6 +42,10 @@ x-kafka-env:
                                                        org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule required \
                                                        publicKeyPath="/tmp/conf/public.pem";
   
+  # KAFKA_CONFLUENT_AUTHORIZER_SCOPE: myCluster
+  KAFKA_CONFLUENT_AUTHORIZER_ACCESS_RULE_PROVIDERS: CONFLUENT,ZK_ACL
+  # KAFKA_CONFLUENT_AUTHORIZER_METADATA_PROVIDER: RBAC
+  KAFKA_CONFLUENT_AUTHORIZER_GROUP_PROVIDER: RBAC
   KAFKA_AUTHORIZER_CLASS_NAME: io.confluent.kafka.security.authorizer.ConfluentServerAuthorizer
   KAFKA_SUPER_USERS: User:admin;User:mds;User:superUser
   
@@ -62,11 +66,6 @@ x-kafka-env:
   KAFKA_CONFLUENT_METADATA_SERVER_TOKEN_KEY_PATH: /tmp/conf/keypair.pem
   KAFKA_CONFLUENT_METADATA_SERVER_PUBLIC_KEY_PATH: /tmp/conf/public.pem
   # KAFKA_CONFLUENT_METADATA_SERVER_SCOPE: ''
-  
-  # KAFKA_CONFLUENT_AUTHORIZER_SCOPE: myCluster
-  KAFKA_CONFLUENT_AUTHORIZER_ACCESS_RULE_PROVIDERS: CONFLUENT,ZK_ACL
-  # KAFKA_CONFLUENT_AUTHORIZER_METADATA_PROVIDER: RBAC
-  KAFKA_CONFLUENT_AUTHORIZER_GROUP_PROVIDER: RBAC
   
   KAFKA_LDAP_JAVA_NAMING_FACTORY_INITIAL: com.sun.jndi.ldap.LdapCtxFactory
   KAFKA_LDAP_COM_SUN_JNDI_LDAP_READ_TIMEOUT: 3000
