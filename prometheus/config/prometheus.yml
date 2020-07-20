@@ -36,6 +36,9 @@ scrape_configs:
       - 'kafka1:1234'
       - 'kafka2:1234'
       - 'kafka3:1234'
+      - 'kafka4:1234'
+      - 'kafka5:1234'
+      - 'kafka6:1234'
       labels:
         env: 'dev'
 
@@ -43,6 +46,12 @@ scrape_configs:
     static_configs:
     - targets:
       - 'zookeeper:1234'
+      - 'zk1:1234'
+      - 'zk2:1234'
+      - 'zk3:1234'
+      - 'zk4:1234'
+      - 'zk5:1234'
+      - 'zk6:1234'
       labels:
         env: 'dev'
 
