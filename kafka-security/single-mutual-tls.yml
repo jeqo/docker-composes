@@ -40,7 +40,7 @@ services:
         -javaagent:/opt/prometheus-jmx-exporter/jmx_prometheus_javaagent.jar=1234:/opt/prometheus-jmx-exporter/kafka-broker.yaml
       "
     volumes:
-      - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
+      - ./../volumes/prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
       - ./mutual-tls/kafka_jaas.conf:/etc/kafka/kafka_jaas.conf
       - ./tls:/etc/kafka/secrets
   kafka-client:

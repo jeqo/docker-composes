@@ -10,4 +10,4 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
       EXTRA_ARGS: -javaagent:/opt/prometheus-jmx-exporter/jmx_prometheus_javaagent.jar=1234:/opt/prometheus-jmx-exporter/zookeeper.yml
     volumes:
-      - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
+      - ./../volumes/prometheus-jmx-exporter:/opt/prometheus-jmx-exporter

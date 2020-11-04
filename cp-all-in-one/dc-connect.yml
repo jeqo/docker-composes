@@ -26,5 +26,5 @@ services:
       CONNECT_PLUGIN_PATH: /usr/share/java,/connect-plugins
       KAFKA_OPTS: "-javaagent:/opt/prometheus-jmx-exporter/jmx_prometheus_javaagent.jar=5083:/opt/prometheus-jmx-exporter/kafka-connect.yaml"
     volumes:
-      - ../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
+      - ../volumes/prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
       - ./connect-plugins:/connect-plugins

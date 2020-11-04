@@ -15,7 +15,7 @@ services:
         -javaagent:/opt/prometheus-jmx-exporter/jmx_prometheus_javaagent.jar=1234:/opt/prometheus-jmx-exporter/zookeeper.yml
       "
     volumes:
-      - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
+      - ./../volumes/prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
       - ./zk/zookeeper_jaas.conf:/etc/kafka/zookeeper_jaas.conf
   kafka-client:
     image: confluentinc/cp-kafka:${CP_VERSION}

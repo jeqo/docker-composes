@@ -117,7 +117,7 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
       EXTRA_ARGS: -javaagent:/opt/prometheus-jmx-exporter/jmx_prometheus_javaagent.jar=1234:/opt/prometheus-jmx-exporter/zookeeper.yml
     volumes:
-      - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
+      - ./../volumes/prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
   kafka1:
     image: confluentinc/cp-server:${CP_VERSION}
     ports:
@@ -133,7 +133,7 @@ services:
       KAFKA_CONFLUENT_METADATA_SERVER_ADVERTISED_LISTENERS: http://kafka1:8090
     volumes:
       - ./conf:/tmp/conf
-      - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
+      - ./../volumes/prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
     depends_on:
       - zk1
 
@@ -152,7 +152,7 @@ services:
       KAFKA_CONFLUENT_METADATA_SERVER_ADVERTISED_LISTENERS: http://kafka2:8090
     volumes:
       - ./conf:/tmp/conf
-      - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
+      - ./../volumes/prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
     depends_on:
       - zk1
   kafka3:
@@ -170,6 +170,6 @@ services:
       KAFKA_CONFLUENT_METADATA_SERVER_ADVERTISED_LISTENERS: http://kafka3:8090
     volumes:
       - ./conf:/tmp/conf
-      - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
+      - ./../volumes/prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
     depends_on:
       - zk1

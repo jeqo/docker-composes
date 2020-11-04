@@ -34,7 +34,7 @@ x-kafka-env:
   "
 x-kafka-vols:
   &kafka-vols
-  - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
+  - ./../volumes/prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
   - ./mutual-tls/kafka_jaas.conf:/etc/kafka/kafka_jaas.conf
   - ./tls:/etc/kafka/secrets
 

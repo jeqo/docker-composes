@@ -8,13 +8,13 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - ./../grafana/:/etc/grafana/provisioning/
+      - ./../volumes/grafana/:/etc/grafana/provisioning/
   prometheus:
     image: prom/prometheus
     ports:
       - 9090:9090
     volumes:
-      - ./../prometheus/config/:/etc/prometheus/
+      - ./../volumes/prometheus/config/:/etc/prometheus/
   ccloud_exporter:
     image: dabz/ccloudexporter
     environment:

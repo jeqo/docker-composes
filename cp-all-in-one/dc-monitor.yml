@@ -6,7 +6,7 @@ services:
     ports:
       - 9090:9090
     volumes:
-      - ./../prometheus/config/:/etc/prometheus/
+      - ./../volumes/prometheus/config/:/etc/prometheus/
   node-exporter:
     image: prom/node-exporter:v1.0.0
     command:
@@ -21,7 +21,7 @@ services:
   kafka-lag-exporter:
     image: lightbend/kafka-lag-exporter:0.6.2
     volumes:
-      - ./../kafka-lag-exporter:/opt/docker/conf
+      - ./../volumes/kafka-lag-exporter:/opt/docker/conf
       # - ./prometheus/security:/etc/kafka/secrets
   grafana:
     image: grafana/grafana:7.0.1
@@ -30,4 +30,4 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - ./../grafana/:/etc/grafana/provisioning/
+      - ./../volumes/grafana/:/etc/grafana/provisioning/

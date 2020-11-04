@@ -22,7 +22,7 @@ x-zk-env:
   "
 x-zk-vols:
   &zk-vols
-  - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
+  - ./../volumes/prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
   - ./cluster-sasl-digest-md5/zookeeper_jaas.conf:/etc/kafka/zookeeper_jaas.conf
 services:
   zk1:
@@ -58,5 +58,5 @@ services:
       ZOOKEEPER_SERVER_ID: 4
       ZOOKEEPER_CLIENT_PORT: 42181
     volumes:
-      - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
+      - ./../volumes/prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
       - ./cluster-sasl-digest-md5/zookeeper_jaas.conf:/etc/kafka/zookeeper_jaas_bad.conf

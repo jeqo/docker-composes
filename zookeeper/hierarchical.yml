@@ -18,7 +18,7 @@
         ZOOKEEPER_SERVER_ID: 1
         ZOOKEEPER_CLIENT_PORT: 12181
       volumes:
-        - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
+        - ./../volumes/prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
     zk2: 
       image: confluentinc/cp-zookeeper:${CP_VERSION}
       ports:
@@ -28,7 +28,7 @@
         ZOOKEEPER_SERVER_ID: 2
         ZOOKEEPER_CLIENT_PORT: 22181
       volumes:
-        - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
+        - ./../volumes/prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
     zk3:
       image: confluentinc/cp-zookeeper:${CP_VERSION}
       ports:
@@ -38,7 +38,7 @@
         ZOOKEEPER_SERVER_ID: 3
         ZOOKEEPER_CLIENT_PORT: 32181
       volumes:
-        - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
+        - ./../volumes/prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
     zk4:
       image: confluentinc/cp-zookeeper:${CP_VERSION}
       ports:
@@ -48,7 +48,7 @@
         ZOOKEEPER_SERVER_ID: 4
         ZOOKEEPER_CLIENT_PORT: 42181
       volumes:
-        - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
+        - ./../volumes/prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
     zk5: 
       image: confluentinc/cp-zookeeper:${CP_VERSION}
       ports:
@@ -58,7 +58,7 @@
         ZOOKEEPER_SERVER_ID: 5
         ZOOKEEPER_CLIENT_PORT: 52181
       volumes:
-        - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
+        - ./../volumes/prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
     zk6:
       image: confluentinc/cp-zookeeper:${CP_VERSION}
       ports:
@@ -68,4 +68,4 @@
         ZOOKEEPER_SERVER_ID: 6
         ZOOKEEPER_CLIENT_PORT: 62181
       volumes:
-        - ./../prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
+        - ./../volumes/prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
