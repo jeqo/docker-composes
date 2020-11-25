@@ -1,19 +1,15 @@
 ---
 version: '3.4'
+
 services:
   sr1:
     image: confluentinc/cp-schema-registry:${CP_VERSION}
     ports:
       - 8085:8085
     environment:
-      CUB_CLASSPATH: '/etc/confluent/docker/docker-utils.jar:/usr/share/java/confluent-security/schema-registry/*:/usr/share/java/schema-registry/*'
+      CUB_CLASSPATH: '/usr/share/java/cp-base-new/*:/usr/share/java/confluent-security/schema-registry/*:/usr/share/java/schema-registry/*'
       SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8085
       SCHEMA_REGISTRY_HOST_NAME: sr1
-
-      SCHEMA_REGISTRY_LOG4J_ROOT_LOGLEVEL: INFO
-      SCHEMA_REGISTRY_KAFKASTORE_TOPIC: _schemas
-
-      SCHEMA_REGISTRY_DEBUG: 'true'
 
       # Enable bearer token authentication which allows the identity of the Schema Registry end user to be propagated to Kafka for authorization
       SCHEMA_REGISTRY_SCHEMA_REGISTRY_RESOURCE_EXTENSION_CLASS: io.confluent.kafka.schemaregistry.security.SchemaRegistrySecurityResourceExtension
@@ -21,8 +17,7 @@ services:
       SCHEMA_REGISTRY_REST_SERVLET_INITIALIZOR_CLASSES: io.confluent.common.security.jetty.initializer.InstallBearerOrBasicSecurityHandler
       SCHEMA_REGISTRY_PUBLIC_KEY_PATH: /tmp/conf/public.pem
 
-      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: zk1:2181
-      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka1:10091,kafka2:10092,kafka3:10093
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka1:10092,kafka2:10092,kafka3:10092
       SCHEMA_REGISTRY_KAFKASTORE_SECURITY_PROTOCOL: SASL_PLAINTEXT
 
       SCHEMA_REGISTRY_KAFKASTORE_SASL_MECHANISM: OAUTHBEARER
@@ -32,19 +27,6 @@ services:
               username="schemaregistryUser" \
               password="schemaregistryUser" \
               metadataServerUrls="http://kafka1:8090,http://kafka2:8090,http://kafka3:8090";
-      # SCHEMA_REGISTRY_KAFKASTORE_SSL_TRUSTSTORE_LOCATION: /etc/kafka/secrets/kafka.schemaregistry.truststore.jks
-      # SCHEMA_REGISTRY_KAFKASTORE_SSL_TRUSTSTORE_PASSWORD: confluent
-      # SCHEMA_REGISTRY_KAFKASTORE_SSL_KEYSTORE_LOCATION: /etc/kafka/secrets/kafka.schemaregistry.keystore.jks
-      # SCHEMA_REGISTRY_KAFKASTORE_SSL_KEYSTORE_PASSWORD: confluent
-      # SCHEMA_REGISTRY_KAFKASTORE_SSL_KEY_PASSWORD: confluent
-      # SCHEMA_REGISTRY_KAFKASTORE_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: "HTTPS"
-
-      # SCHEMA_REGISTRY_SCHEMA_REGISTRY_INTER_INSTANCE_PROTOCOL: "https"
-
-      # SCHEMA_REGISTRY_SSL_KEYSTORE_LOCATION: /etc/kafka/secrets/kafka.schemaregistry.keystore.jks
-      # SCHEMA_REGISTRY_SSL_KEYSTORE_PASSWORD: confluent
-      # SCHEMA_REGISTRY_SSL_KEY_PASSWORD: confluent
-      # SCHEMA_REGISTRY_SSL_CIPHER_SUITES: "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"
 
       # Used by Schema Registry to connect to MDS to authenticate and authorize clients
       SCHEMA_REGISTRY_CONFLUENT_METADATA_BOOTSTRAP_SERVER_URLS: http://kafka1:8090,http://kafka2:8090,http://kafka3:8090
