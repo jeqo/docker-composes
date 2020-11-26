@@ -7,9 +7,9 @@ sn: Sheen
 givenName: MDS
 cn: mds
 displayName: MDS Sheen
-uidNumber: 10023
+uidNumber: 10100
 gidNumber: 5000
-userPassword: mds
+userPassword: password
 gecos: mds
 loginShell: /bin/bash
 homeDirectory: /home/mds

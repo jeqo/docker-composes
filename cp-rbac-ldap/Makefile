@@ -15,6 +15,9 @@ up_rbac_kafka:
 up_rbac_sr:
 	docker-compose -f ldap.yml -f rbac-kafka.yml -f rbac-sr.yml up -d
 
+up_rbac_connect:
+	docker-compose -f ldap.yml -f rbac-kafka.yml -f rbac-connect.yml up -d
+
 down:
 	docker-compose -f ldap.yml down --remove-orphans
 
@@ -23,26 +26,52 @@ get_cluster_id:
 
 rbac_sr:
 	${CONFLUENT_HOME}/bin/confluent iam rolebinding create \
-		--role SecurityAdmin \
 		--principal User:schemaregistryUser \
+		--role SecurityAdmin \
 		--kafka-cluster-id ${KAFKA_CLUSTER_ID} \
 		--schema-registry-cluster-id schema-registry
 	${CONFLUENT_HOME}/bin/confluent iam rolebinding create \
-		--role ResourceOwner \
 		--principal User:schemaregistryUser \
+		--role ResourceOwner \
 		--kafka-cluster-id ${KAFKA_CLUSTER_ID} \
 		--resource Group:schema-registry
 	${CONFLUENT_HOME}/bin/confluent iam rolebinding create \
-		--role ResourceOwner \
 		--principal User:schemaregistryUser \
+		--role ResourceOwner \
 		--kafka-cluster-id ${KAFKA_CLUSTER_ID} \
 		--resource Topic:_schemas
 	${CONFLUENT_HOME}/bin/confluent iam rolebinding create \
-		--role ResourceOwner \
 		--principal User:schemaregistryUser \
+		--role ResourceOwner \
 		--kafka-cluster-id ${KAFKA_CLUSTER_ID} \
 		--resource Topic:_confluent-license
 
+rbac_connect:
+	${CONFLUENT_HOME}/bin/confluent iam rolebinding create \
+		--principal User:connectAdmin \
+		--role SecurityAdmin \
+		--kafka-cluster-id ${KAFKA_CLUSTER_ID} \
+		--connect-cluster-id connect-cluster
+	${CONFLUENT_HOME}/bin/confluent iam rolebinding create \
+		--principal User:connectAdmin \
+		--role ResourceOwner \
+		--kafka-cluster-id ${KAFKA_CLUSTER_ID} \
+		--resource Group:connect-cluster
+	${CONFLUENT_HOME}/bin/confluent iam rolebinding create \
+		--principal User:connectAdmin \
+		--role ResourceOwner \
+		--kafka-cluster-id ${KAFKA_CLUSTER_ID} \
+		--resource Topic:connect-configs
+	${CONFLUENT_HOME}/bin/confluent iam rolebinding create \
+		--principal User:connectAdmin \
+		--role ResourceOwner \
+		--kafka-cluster-id ${KAFKA_CLUSTER_ID} \
+		--resource Topic:connect-offsets
+	${CONFLUENT_HOME}/bin/confluent iam rolebinding create \
+		--principal User:connectAdmin \
+		--role ResourceOwner \
+		--kafka-cluster-id ${KAFKA_CLUSTER_ID} \
+		--resource Topic:connect-status
 ps:
 	docker-compose -f ldap.yml -f kafka-rbac.yml -f sr-rbac.yml -f monitor.yml ps
 

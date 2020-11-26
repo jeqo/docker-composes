@@ -1,14 +1,13 @@
 ---
 version: '3.4'
-
 services:
   sr1:
     image: confluentinc/cp-schema-registry:${CP_VERSION}
     ports:
-      - 8085:8085
+      - 8081:8081
     environment:
       CUB_CLASSPATH: '/usr/share/java/cp-base-new/*:/usr/share/java/confluent-security/schema-registry/*:/usr/share/java/schema-registry/*'
-      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8085
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
       SCHEMA_REGISTRY_HOST_NAME: sr1
 
       # Enable bearer token authentication which allows the identity of the Schema Registry end user to be propagated to Kafka for authorization

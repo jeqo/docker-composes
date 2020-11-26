@@ -1,0 +1,68 @@
+---
+version: '3.4'
+services:
+  connect1:
+    image: confluentinc/cp-server-connect:${CP_VERSION}
+    ports:
+        - "8083:8083"
+    environment:
+      CUB_CLASSPATH: '/usr/share/java/cp-base-new/*:/usr/share/java/confluent-security/connect/*:/usr/share/java/kafka/*'
+      CONNECT_REST_ADVERTISED_HOST_NAME: connect
+      CONNECT_LISTENERS: http://0.0.0.0:8083
+      CONNECT_REST_PORT: 8083
+      CONNECT_GROUP_ID: connect-cluster
+      CONNECT_REPLICATION_FACTOR: 1
+      # configs storage topic
+      CONNECT_CONFIG_STORAGE_TOPIC: connect-configs
+      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
+      # offsets storage topic and settings
+      CONNECT_OFFSET_STORAGE_TOPIC: connect-offsets
+      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_OFFSET_FLUSH_INTERVAL_MS: 10000
+      # status storage topic
+      CONNECT_STATUS_STORAGE_TOPIC: connect-status
+      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
+      # Default to Json converters:
+      CONNECT_KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_INTERNAL_KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_INTERNAL_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+
+      CONNECT_LOG4J_ROOT_LOGLEVEL: INFO
+      CONNECT_LOG4J_LOGGERS: org.reflections=ERROR
+
+      CONNECT_BOOTSTRAP_SERVERS: kafka1:10092,kafka2:10092,kafka3:10092
+      CONNECT_SECURITY_PROTOCOL: SASL_PLAINTEXT
+
+      CONNECT_SASL_MECHANISM: OAUTHBEARER
+      CONNECT_SASL_LOGIN_CALLBACK_HANDLER_CLASS: io.confluent.kafka.clients.plugins.auth.token.TokenUserLoginCallbackHandler
+      CONNECT_SASL_JAAS_CONFIG: |
+              org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule required \
+              username="connectadmin" \
+              password="connectAdmin" \
+              metadataServerUrls="http://kafka1:8090,http://kafka2:8090,http://kafka3:8090";
+      
+      # Allow overriding configs on the connector level
+      CONNECT_CONNECTOR_CLIENT_CONFIG_OVERRIDE_POLICY: 'All'
+      # Default producer configs
+      CONNECT_PRODUCER_SECURITY_PROTOCOL: 'SASL_PLAINTEXT'
+      CONNECT_PRODUCER_SASL_MECHANISM: 'OAUTHBEARER'
+      CONNECT_PRODUCER_SASL_LOGIN_CALLBACK_HANDLER_CLASS: 'io.confluent.kafka.clients.plugins.auth.token.TokenUserLoginCallbackHandler'
+      # Default consumer configs
+      CONNECT_CONSUMER_SECURITY_PROTOCOL: 'SASL_PLAINTEXT'
+      CONNECT_CONSUMER_SASL_MECHANISM: 'OAUTHBEARER'
+      CONNECT_CONSUMER_SASL_LOGIN_CALLBACK_HANDLER_CLASS: 'io.confluent.kafka.clients.plugins.auth.token.TokenUserLoginCallbackHandler'
+      # Default admin config
+      CONNECT_ADMIN_SECURITY_PROTOCOL: 'SASL_PLAINTEXT'
+      CONNECT_ADMIN_SASL_MECHANISM: 'OAUTHBEARER'
+      CONNECT_ADMIN_SASL_LOGIN_CALLBACK_HANDLER_CLASS: 'io.confluent.kafka.clients.plugins.auth.token.TokenUserLoginCallbackHandler'
+
+      CONNECT_REST_EXTENSION_CLASSES: 'io.confluent.connect.security.ConnectSecurityExtension,io.confluent.connect.secretregistry.ConnectSecretRegistryExtension'
+      CONNECT_REST_SERVLET_INITIALIZOR_CLASSES: 'io.confluent.common.security.jetty.initializer.InstallBearerOrBasicSecurityHandler'
+      CONNECT_PUBLIC_KEY_PATH: '/tmp/conf/public.pem'
+
+      CONNECT_CONFLUENT_METADATA_BOOTSTRAP_SERVER_URLS: 'http://kafka1:8090,http://kafka2:8090,http://kafka3:8090'
+      CONNECT_CONFLUENT_METADATA_BASIC_AUTH_USER_INFO: 'connectAdmin:connectAdmin'
+      CONNECT_CONFLUENT_METADATA_HTTP_AUTH_CREDENTIALS_PROVIDER: 'BASIC'
+    volumes:
+      - ./conf:/tmp/conf
