@@ -5,6 +5,7 @@ services:
     image: splunk/splunk:latest
     ports: 
       - 8000:8000
+      - 9997:9997
     environment: 
       SPLUNK_START_ARGS: "--accept-license"
       SPLUNK_PASSWORD: "welcome1"
