@@ -12,7 +12,7 @@ services:
       - 389:389
       - 636:636
     volumes:
-      - ./../ldap/forest1:/container/service/slapd/assets/config/bootstrap/ldif/custom
+      - ./forest1:/container/service/slapd/assets/config/bootstrap/ldif/custom
   ## remember that the user name is CN=admin,DC=confluent,DC=io and the password is admin
   ldap-admin:
     image: osixia/phpldapadmin:0.9.0

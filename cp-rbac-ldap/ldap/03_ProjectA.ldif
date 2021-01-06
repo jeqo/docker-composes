@@ -1,6 +1,0 @@
-dn: cn=ProjectA,ou=groups,{{ LDAP_BASE_DN }}
-objectClass: top
-objectClass: posixGroup
-cn: ProjectA
-gidNumber: 5001
-

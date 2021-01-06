@@ -1,4 +1,4 @@
-dn: cn=donald,ou=users,{{ LDAP_BASE_DN }}
+dn: cn=donald,ou=business,ou=users,{{ LDAP_BASE_DN }}
 objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
@@ -7,8 +7,8 @@ sn: Duck
 givenName: Donald
 cn: donald
 displayName: Donald Duck
-uidNumber: 10003
-gidNumber: 5000
+uidNumber: 10013
+gidNumber: 20
 userPassword: donald-secret
 gecos: donald
 loginShell: /bin/bash
