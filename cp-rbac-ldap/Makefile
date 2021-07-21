@@ -73,7 +73,7 @@ rbac_connect:
 		--kafka-cluster-id ${KAFKA_CLUSTER_ID} \
 		--resource Topic:connect-status
 ps:
-	docker-compose -f ldap.yml -f kafka-rbac.yml -f sr-rbac.yml -f monitor.yml ps
+	docker-compose -f ldap.yml -f rbac-kafka.yml -f rbac-sr.yml -f monitor.yml ps
 
 logs:
 	docker-compose -f ldap.yml -f kafka.yml -f monitor.yml logs -f ${SVC}

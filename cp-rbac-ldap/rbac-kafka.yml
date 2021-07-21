@@ -5,7 +5,7 @@ x-kafka-env:
   &kafka-env
   KAFKA_ZOOKEEPER_CONNECT: zk1:2181
   
-  KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: BROKER:SASL_PLAINTEXT,TOKEN:SASL_PLAINTEXT,INTERNAL:SASL_PLAINTEXT,EXTERNAL:SASL_PLAINTEXT
+  KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: BROKER:SASL_PLAINTEXT,TOKEN:SASL_PLAINTEXT,INTERNAL:SASL_PLAINTEXT,EXTERNAL:SASL_PLAINTEXT,LDAPCLIENT:SASL_PLAINTEXT
   
   KAFKA_INTER_BROKER_LISTENER_NAME: BROKER
   KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL: PLAIN
@@ -40,6 +40,10 @@ x-kafka-env:
                                                        \
                                                        org.apache.kafka.common.security.oauthbearer.OAuthBearerLoginModule required \
                                                        publicKeyPath="/tmp/conf/public.pem";
+
+  KAFKA_LISTENER_NAME_LDAPCLIENT_SASL_ENABLED_MECHANISMS: PLAIN
+  KAFKA_LISTENER_NAME_LDAPCLIENT_PLAIN_SASL_JAAS_CONFIG: org.apache.kafka.common.security.plain.PlainLoginModule required;
+  KAFKA_LISTENER_NAME_LDAPCLIENT_PLAIN_SASL_SERVER_CALLBACK_HANDLER_CLASS: io.confluent.security.auth.provider.ldap.LdapAuthenticateCallbackHandler
   
   KAFKA_AUTHORIZER_CLASS_NAME: io.confluent.kafka.security.authorizer.ConfluentServerAuthorizer
   KAFKA_SUPER_USERS: User:admin;User:mds;User:superUser
@@ -68,19 +72,24 @@ x-kafka-env:
   KAFKA_CONFLUENT_METADATA_SERVER_PUBLIC_KEY_PATH: /tmp/conf/public.pem
   # KAFKA_CONFLUENT_METADATA_SERVER_SCOPE: ''
   
-  KAFKA_LDAP_JAVA_NAMING_FACTORY_INITIAL: com.sun.jndi.ldap.LdapCtxFactory
-  KAFKA_LDAP_COM_SUN_JNDI_LDAP_READ_TIMEOUT: 3000
   KAFKA_LDAP_JAVA_NAMING_PROVIDER_URL: ldap://ldap:389
   KAFKA_LDAP_JAVA_NAMING_SECURITY_PRINCIPAL: cn=admin,dc=confluent,dc=io
   KAFKA_LDAP_JAVA_NAMING_SECURITY_CREDENTIALS: admin
   KAFKA_LDAP_JAVA_NAMING_SECURITY_AUTHENTICATION: simple
-  KAFKA_LDAP_USER_SEARCH_BASE: ou=users,dc=confluent,dc=io
-  KAFKA_LDAP_GROUP_SEARCH_BASE: ou=groups,dc=confluent,dc=io
-  KAFKA_LDAP_USER_NAME_ATTRIBUTE: uid
+
+  KAFKA_LDAP_USER_SEARCH_BASE: dc=confluent,dc=io
+  KAFKA_LDAP_USER_SEARCH_SCOPE: 2
   KAFKA_LDAP_USER_OBJECT_CLASS: inetOrgPerson
-  KAFKA_LDAP_USER_MEMBEROF_ATTRIBUTE: ou
-  KAFKA_LDAP_GROUP_NAME_ATTRIBUTE: cn
+  KAFKA_LDAP_USER_NAME_ATTRIBUTE: cn
+
+  KAFKA_LDAP_SEARCH_MODE: GROUPS
+
+  KAFKA_LDAP_GROUP_SEARCH_BASE: ou=groups,ou=bigdata,dc=confluent,dc=io
+  KAFKA_LDAP_GROUP_SEARCH_SCOPE: 2
   KAFKA_LDAP_GROUP_OBJECT_CLASS: posixGroup
+  KAFKA_LDAP_GROUP_NAME_ATTRIBUTE: cn
+  KAFKA_LDAP_GROUP_MEMBER_ATTRIBUTE: memberUid
+  KAFKA_LDAP_GROUP_MEMBER_ATTRIBUTE_PATTERN: "cn=(\\w+),.*"
 
   KAFKA_METRIC_REPORTERS: io.confluent.metrics.reporter.ConfluentMetricsReporter
   CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: kafka1:9092,kafka2:9092,kafka3:9092
@@ -128,10 +137,11 @@ services:
       - 10091:10092
       - 11091:11092
       - 12091:12091
+      - 13091:13091
     environment:
       << : *kafka-env
       KAFKA_BROKER_ID: 1
-      KAFKA_ADVERTISED_LISTENERS: BROKER://kafka1:9092,TOKEN://kafka1:10092,INTERNAL://kafka1:11092,EXTERNAL://localhost:12091
+      KAFKA_ADVERTISED_LISTENERS: BROKER://kafka1:9092,TOKEN://kafka1:10092,INTERNAL://kafka1:11092,EXTERNAL://localhost:12091,LDAPCLIENT://localhost:13091
       KAFKA_CONFLUENT_METADATA_SERVER_ADVERTISED_LISTENERS: http://kafka1:8090
     volumes:
       - ./conf:/tmp/conf
@@ -147,16 +157,18 @@ services:
       - 10092:10092
       - 11092:11092
       - 12092:12092
+      - 13092:13092
     environment:
       << : *kafka-env
       KAFKA_BROKER_ID: 2
-      KAFKA_ADVERTISED_LISTENERS: BROKER://kafka2:9092,TOKEN://kafka2:10092,INTERNAL://kafka2:11092,EXTERNAL://localhost:12092
+      KAFKA_ADVERTISED_LISTENERS: BROKER://kafka2:9092,TOKEN://kafka2:10092,INTERNAL://kafka2:11092,EXTERNAL://localhost:12092,LDAPCLIENT://localhost:13092
       KAFKA_CONFLUENT_METADATA_SERVER_ADVERTISED_LISTENERS: http://kafka2:8090
     volumes:
       - ./conf:/tmp/conf
       - ./../volumes/prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
     depends_on:
       - zk1
+
   kafka3:
     image: confluentinc/cp-server:${CP_VERSION}
     ports:
@@ -165,11 +177,32 @@ services:
       - 10093:10092
       - 11093:11092
       - 12093:12093
+      - 13093:13093
     environment:
       << : *kafka-env
       KAFKA_BROKER_ID: 3
-      KAFKA_ADVERTISED_LISTENERS: BROKER://kafka3:9092,TOKEN://kafka3:10092,INTERNAL://kafka3:11092,EXTERNAL://localhost:12093
+      KAFKA_ADVERTISED_LISTENERS: BROKER://kafka3:9092,TOKEN://kafka3:10092,INTERNAL://kafka3:11092,EXTERNAL://localhost:12093,LDAPCLIENT://localhost:13093
       KAFKA_CONFLUENT_METADATA_SERVER_ADVERTISED_LISTENERS: http://kafka3:8090
+    volumes:
+      - ./conf:/tmp/conf
+      - ./../volumes/prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
+    depends_on:
+      - zk1
+
+  kafka4:
+    image: confluentinc/cp-server:${CP_VERSION}
+    ports:
+      - 8094:8090
+      - 9094:9092
+      - 10094:10092
+      - 11094:11092
+      - 12094:12094
+      - 13094:13094
+    environment:
+      << : *kafka-env
+      KAFKA_BROKER_ID: 4
+      KAFKA_ADVERTISED_LISTENERS: BROKER://kafka4:9092,TOKEN://kafka4:10092,INTERNAL://kafka4:11092,EXTERNAL://localhost:12094,LDAPCLIENT://localhost:13094
+      KAFKA_CONFLUENT_METADATA_SERVER_ADVERTISED_LISTENERS: http://kafka4:8090
     volumes:
       - ./conf:/tmp/conf
       - ./../volumes/prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
