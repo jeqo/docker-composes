@@ -13,13 +13,7 @@ x-kafka-env:
   KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
   KAFKA_CONFLUENT_SUPPORT_METRICS_ENABLE: "false"
   KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
-
-  KAFKA_OPTS: "
-    -javaagent:/opt/prometheus-jmx-exporter/jmx_prometheus_javaagent.jar=1234:/opt/prometheus-jmx-exporter/kafka-broker.yaml
-  "
-x-kafka-vols:
-  &kafka-vols
-  - ./../volumes/prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
+  KAFKA_MIN_INSYNC_REPLICAS: 2
 
 services:
   zk1:
@@ -29,46 +23,46 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
-      EXTRA_ARGS: "
-        -javaagent:/opt/prometheus-jmx-exporter/jmx_prometheus_javaagent.jar=1234:/opt/prometheus-jmx-exporter/zookeeper.yml
-      "
-    volumes:
-      - ./../volumes/prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
 
   kafka1:
     image: confluentinc/cp-kafka:${CP_VERSION}
     ports:
-      - 19092:9092
-      - 19093:9093
+      - 19092:19092
     environment: 
       << : *kafka-env
       KAFKA_BROKER_ID: 1
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:19092,PLAINTEXT_HOST://localhost:9092
-    volumes: *kafka-vols
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:9092,PLAINTEXT_HOST://localhost:19092
+    volumes:
+      - kafka1-data:/var/lib/kafka/data:rw
 
   kafka2:
     image: confluentinc/cp-kafka:${CP_VERSION}
     ports:
       - 29092:29092
-      - 29093:29093
     environment: 
       << : *kafka-env
       KAFKA_BROKER_ID: 2
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:19092,PLAINTEXT_HOST://localhost:29092
-    volumes: *kafka-vols
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:9092,PLAINTEXT_HOST://localhost:29092
+    volumes:
+      - kafka2-data:/var/lib/kafka/data:rw
 
   kafka3:
     image: confluentinc/cp-kafka:${CP_VERSION}
     ports:
       - 39092:39092
-      - 39093:39093
     environment: 
       << : *kafka-env
       KAFKA_BROKER_ID: 3
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3:19092,PLAINTEXT_HOST://localhost:39092
-    volumes: *kafka-vols
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3:9092,PLAINTEXT_HOST://localhost:39092
+    volumes:
+      - kafka3-data:/var/lib/kafka/data:rw
 
   kafka-client:
     image: confluentinc/cp-kafka:${CP_VERSION}
     entrypoint: /bin/sh
     tty: true
+
+volumes:
+  kafka1-data:
+  kafka2-data:
+  kafka3-data:
