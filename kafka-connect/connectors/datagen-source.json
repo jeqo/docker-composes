@@ -1,0 +1,10 @@
+{
+  "name": "datagen-orders-v2",
+  "config": {
+    "connector.class": "io.confluent.kafka.connect.datagen.DatagenConnector",
+    "kafka.topic": "orders-v2",
+    "quickstart": "orders",
+    "max.interval": 1000,
+    "tasks.max": "1"
+  }
+}

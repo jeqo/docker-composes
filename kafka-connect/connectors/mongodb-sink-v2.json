@@ -1,0 +1,15 @@
+{
+  "name": "mongodb-sink-transform-v8",
+  "config": {
+    "connector.class": "com.mongodb.kafka.connect.MongoSinkConnector",
+    "tasks.max": "1",
+    "connection.uri": "mongodb://root:example@mongodb:27017",
+    "database": "gds-test",
+    "collection": "gds_test_v8",
+    "topics": "orders-v2",
+
+    "document.id.strategy": "com.mongodb.kafka.connect.sink.processor.id.strategy.PartialValueStrategy",
+    "document.id.strategy.partial.value.projection.type": "AllowList",
+    "document.id.strategy.partial.value.projection.list": "data.POL_NO,data.headers.transactionId"
+  }
+}

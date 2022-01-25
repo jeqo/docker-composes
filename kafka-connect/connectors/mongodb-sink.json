@@ -1,0 +1,16 @@
+{
+  "name": "mongodb-sink-transform-v1",
+  "config": {
+    "connector.class": "com.mongodb.kafka.connect.MongoSinkConnector",
+    "tasks.max": "1",
+    "connection.uri": "mongodb://root:example@mongodb:27017",
+    "database": "gds-test",
+    "collection": "gds_test_v3",
+    "topics": "orders-v1",
+    "document.id.strategy": "com.mongodb.kafka.connect.sink.processor.id.strategy.FullKeyStrategy",
+
+    "transforms": "valueToKey,extractValue",
+    "transforms.valueToKey.type": "org.apache.kafka.connect.transforms.ValueToKey",
+    "transforms.valueToKey.fields": "orderid,address"
+  }
+}
