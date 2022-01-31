@@ -19,5 +19,5 @@ services:
       - ./zk/zookeeper_jaas.conf:/etc/kafka/zookeeper_jaas.conf
   kafka-client:
     image: confluentinc/cp-kafka:${CP_VERSION}
-    entrypoint: /bin/sh
+    entrypoint: /bin/bash
     tty: true
