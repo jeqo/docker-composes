@@ -44,6 +44,8 @@ make consumer_run
 make producer_run
 ```
 
+Finally, to clean up: `make destroy`
+
 ## Scenarios
 
 ### Revoke Certificates
