@@ -6,7 +6,7 @@ export VAULT_TOKEN
 
 DEFAULT_PASSWORD := changeme
 
-all: clean root_ca intermediate_ca pki_roles token_roles truststore broker_keystore
+all:
 
 clean:
 	rm -rf ./pki
@@ -105,10 +105,29 @@ KAFKA_TOPIC := test
 kafka_topic:
 	${KAFKA_HOME}/bin/kafka-topics.sh --topic ${KAFKA_TOPIC} --bootstrap-server localhost:9092 --create
 
-run_consumer:
+consumer_run:
 	${KAFKA_HOME}/bin/kafka-console-consumer.sh --topic ${KAFKA_TOPIC} --bootstrap-server localhost:9093 \
 		--consumer.config ./config/consumer.properties
 
-run_producer:
+producer_run:
 	${KAFKA_HOME}/bin/kafka-console-producer.sh --topic ${KAFKA_TOPIC} --bootstrap-server localhost:9093 \
 		--producer.config ./config/producer.properties
+
+destroy:
+	docker-compose down --remove-orphans
+	make clean
+
+vault_up:
+	docker-compose up -d vault
+
+kafka_up:
+	docker-compose up -d zookeeper kafka
+
+wait_5:
+	sleep 5
+
+vault_pki_and_keys: vault_up wait_5 root_ca intermediate_ca pki_roles token_roles truststore broker_keystore
+
+kafka_and_topics: kafka_up wait_5 wait_5 wait_5 kafka_topic
+
+prep: clean vault_pki_and_keys kafka_and_topics

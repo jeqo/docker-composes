@@ -65,7 +65,7 @@ services:
       KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: ""
 
       ## Here is where CRL validation for revoked certificates is enabled.
-      # KAFKA_OPTS: "-Dcom.sun.security.enableCRLDP=true -Dcom.sun.net.ssl.checkRevocation=true"
+      KAFKA_OPTS: "-Dcom.sun.security.enableCRLDP=true -Dcom.sun.net.ssl.checkRevocation=true"
     depends_on:
       - zookeeper
     volumes:
