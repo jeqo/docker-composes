@@ -42,7 +42,7 @@ services:
       - kafka
   connect:
     build:
-      context: ./aws-secret-config-provider/.
+      context: connect
     ports:
       - "8083:8083"
     environment:
