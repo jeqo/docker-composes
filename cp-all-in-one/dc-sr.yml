@@ -1,6 +1,9 @@
 ---
 version: '3'
-services: 
+services:
+  kafka:
+    environment:
+      KAFKA_CONFLUENT_SCHEMA_REGISTRY_URL: http://schema-registry:8081
   schema-registry:
     image: confluentinc/cp-schema-registry:${CP_VERSION}
     ports:
