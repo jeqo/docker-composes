@@ -1,7 +1,8 @@
 ---
 services:
   ksqldb-server:
-    image: confluentinc/cp-ksqldb-server:${CP_VERSION}
+    # image: confluentinc/cp-ksqldb-server:${CP_VERSION}
+    image: confluentinc/ksqldb-server:${KSQLDB_VERSION}
     ports:
       - "8088:8088"
     environment:
@@ -19,7 +20,8 @@ services:
       KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE: 'true'
 
   ksqldb-cli:
-    image: confluentinc/cp-ksqldb-cli:${CP_VERSION}
+    # image: confluentinc/cp-ksqldb-cli:${CP_VERSION}
+    image: confluentinc/ksqldb-cli:${KSQLDB_VERSION}
     container_name: ksqldb-cli
     entrypoint: /bin/sh
     tty: true
