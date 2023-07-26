@@ -8,9 +8,15 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
-      EXTRA_ARGS: -javaagent:/opt/prometheus-jmx-exporter/jmx_prometheus_javaagent.jar=1234:/opt/prometheus-jmx-exporter/zookeeper.yml
+      EXTRA_ARGS: -javaagent:/opt/prometheus-jmx-exporter/jmx_prometheus_javaagent.jar=1234:/opt/prometheus-jmx-exporter/zookeeper.yml -Dzookeeper.4lw.commands.whitelist=*
     volumes:
       - ./../volumes/prometheus-jmx-exporter:/opt/prometheus-jmx-exporter
+        
+  telegraf:
+    image: telegraf:latest
+    volumes:
+      - ./telegraf.conf:/etc/telegraf/telegraf.conf:ro
+
   kafka:
     image: confluentinc/cp-server:${CP_VERSION}
     ports:

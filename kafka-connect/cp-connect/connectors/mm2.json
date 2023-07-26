@@ -1,0 +1,21 @@
+{
+  "name": "mm2",
+  "config": {
+    "connector.class": "org.apache.kafka.connect.mirror.MirrorSourceConnector",
+    "clusters": "prim, sec",
+    "source.cluster.alias": "prim",
+    "source.cluster.bootstrap.servers": "kafka:19092",
+    "target.cluster.alias": "sec",
+    "target.cluster.bootstrap.servers": "kafka:19092",
+    "topics": "t.*",
+    "key.converter": " org.apache.kafka.connect.converters.ByteArrayConverter",
+    "value.converter": "org.apache.kafka.connect.converters.ByteArrayConverter",
+    "tasks.max": "1",
+
+    "transforms": "filter",
+    "transforms.filter.type": "org.apache.kafka.connect.transforms.Filter",
+    "transforms.filter.predicate": "isTombstone",
+    "predicates": "isTombstone",
+    "predicates.isTombstone.type": "org.apache.kafka.connect.transforms.predicates.RecordIsTombstone"
+  }
+}

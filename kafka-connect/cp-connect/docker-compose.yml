@@ -8,8 +8,9 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+
   kafka:
-    image: confluentinc/cp-server:${CP_VERSION}
+    image: confluentinc/cp-kafka:${CP_VERSION}
     ports:
       - "9092:9092"
     environment:
@@ -21,16 +22,9 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-      KAFKA_METRIC_REPORTERS: io.confluent.metrics.reporter.ConfluentMetricsReporter
-      CONFLUENT_METRICS_ENABLE: "true"
-      CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: kafka:19092
-      CONFLUENT_METRICS_REPORTER_ZOOKEEPER_CONNECT: zookeeper:2181
-      CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
-      KAFKA_CONFLUENT_SUPPORT_METRICS_ENABLE: "false"
-      CONFLUENT_SUPPORT_CUSTOMER_ID: anonymous
-      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
     depends_on:
       - zookeeper
+
   schema-registry:
     image: confluentinc/cp-schema-registry:${CP_VERSION}
     ports:
@@ -40,6 +34,7 @@ services:
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:19092
     depends_on:
       - kafka
+
   connect:
     build:
       context: connect
@@ -65,29 +60,10 @@ services:
       CONNECT_VALUE_CONVERTER: io.confluent.connect.avro.AvroConverter
       CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: http://schema-registry:8081
       CONNECT_PLUGIN_PATH: /usr/share/java,/usr/share/confluent-hub-components
-      CONNECT_LOG4J_LOGGERS: org.apache.zookeeper=ERROR,org.I0Itec.zkclient=ERROR,org.reflections=ERROR
 
       # aws secret manager config provider
-      CONNECT_CONFIG_PROVIDERS: aws
-      CONNECT_CONFIG_PROVIDERS_AWS_CLASS: com.github.jcustenborder.kafka.config.aws.SecretsManagerConfigProvider
-      CONNECT_CONFIG_PROVIDERS_AWS_PARAM_AWS_REGION: eu-west-1
-      CONNECT_CONFIG_PROVIDERS_AWS_PARAM_AWS_ACCESS_KEY: ${AWS_ACCESS_KEY_ID}
-      CONNECT_CONFIG_PROVIDERS_AWS_PARAM_AWS_SECRET_KEY: ${AWS_SECRET_KEY}
-
-  # for MongoDB Connector
-  mongodb:
-    image: mongo:4.4.6
-    ports:
-      - "27017:27017"
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=example
-
-  mongo-express:
-    image: mongo-express
-    ports:
-      - "9081:8081"
-    environment:
-      ME_CONFIG_MONGODB_SERVER: mongodb
-      ME_CONFIG_MONGODB_ADMINUSERNAME: root
-      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      # CONNECT_CONFIG_PROVIDERS: aws
+      # CONNECT_CONFIG_PROVIDERS_AWS_CLASS: com.github.jcustenborder.kafka.config.aws.SecretsManagerConfigProvider
+      # CONNECT_CONFIG_PROVIDERS_AWS_PARAM_AWS_REGION: eu-west-1
+      # CONNECT_CONFIG_PROVIDERS_AWS_PARAM_AWS_ACCESS_KEY: ${AWS_ACCESS_KEY_ID}
+      # CONNECT_CONFIG_PROVIDERS_AWS_PARAM_AWS_SECRET_KEY: ${AWS_SECRET_KEY}
