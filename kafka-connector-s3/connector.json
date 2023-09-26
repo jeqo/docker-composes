@@ -1,0 +1,21 @@
+{
+  "name": "s3-test-user_id",
+  "config": {
+    "connector.class": "io.aiven.kafka.connect.s3.AivenKafkaConnectS3SinkConnector",
+    "tasks.max": "1",
+    "topics": "t1",
+    "format.output.type": "jsonl",
+    "aws.s3.endpoint": "http://minio:9000",
+    "aws.access.key.id": "minioadmin",
+    "aws.secret.access.key": "minioadmin",
+    "aws.s3.region": "us-east-1",
+    "aws.s3.bucket.name": "test-bucket",
+    "file.name.template": "test-user-id/{{topic}}-{{partition:padding=true}}/user-id={{key}}/{{start_offset:padding=true}}.jsonl",
+
+    "transforms": "createKey,extractInt",
+    "transforms.createKey.type": "org.apache.kafka.connect.transforms.ValueToKey",
+    "transforms.createKey.fields": "user_id",
+    "transforms.extractInt.type": "org.apache.kafka.connect.transforms.ExtractField$Key",
+    "transforms.extractInt.field": "user_id"
+  }
+}
