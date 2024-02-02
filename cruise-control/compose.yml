@@ -1,0 +1,87 @@
+services:
+  zookeeper:
+    image: "confluentinc/cp-zookeeper:7.3.3"
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+
+  kafka:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: kafka
+    image: kafka-cc
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 0
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092,BROKER://0.0.0.0:9091"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://localhost:9092,BROKER://kafka:9091"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,BROKER:PLAINTEXT"
+      KAFKA_INTER_BROKER_LISTENER_NAME: "BROKER"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
+      KAFKA_METRIC_REPORTERS: com.linkedin.kafka.cruisecontrol.metricsreporter.CruiseControlMetricsReporter
+      KAFKA_CRUISE_CONTROL_METRICS_REPORTER_BOOTSTRAP_SERVERS: kafka:9091
+
+  kafka1:
+    image: kafka-cc
+    depends_on:
+      - zookeeper
+    ports:
+      - "19092:19092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:19092,BROKER://0.0.0.0:19091"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://localhost:19092,BROKER://kafka1:19091"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,BROKER:PLAINTEXT"
+      KAFKA_INTER_BROKER_LISTENER_NAME: "BROKER"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
+      KAFKA_METRIC_REPORTERS: com.linkedin.kafka.cruisecontrol.metricsreporter.CruiseControlMetricsReporter
+      KAFKA_CRUISE_CONTROL_METRICS_REPORTER_BOOTSTRAP_SERVERS: kafka1:19091
+
+  kafka2:
+    image: kafka-cc
+    depends_on:
+      - zookeeper
+    ports:
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:29092,BROKER://0.0.0.0:29091"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://localhost:29092,BROKER://kafka2:29091"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,BROKER:PLAINTEXT"
+      KAFKA_INTER_BROKER_LISTENER_NAME: "BROKER"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
+      KAFKA_METRIC_REPORTERS: com.linkedin.kafka.cruisecontrol.metricsreporter.CruiseControlMetricsReporter
+      KAFKA_CRUISE_CONTROL_METRICS_REPORTER_BOOTSTRAP_SERVERS: kafka2:29091
+
+  cruise-control:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: cruise-control
+    depends_on:
+      - zookeeper
+      - kafka
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./cruisecontrol.properties:/opt/cruise-control/config/cruisecontrol.properties
