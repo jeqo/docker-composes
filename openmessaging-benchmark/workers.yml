@@ -1,0 +1,4 @@
+workers:
+  - http://worker:8080
+  - http://worker1:8080
+

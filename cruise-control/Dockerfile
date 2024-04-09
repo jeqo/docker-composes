@@ -3,7 +3,7 @@ FROM redhat/ubi8 as cruise-control
 RUN yum install -y java-11-openjdk-devel wget tar git
 
 ENV CRUISE_CONTROL_HOME=/opt/cruise-control
-ENV CRUISE_CONTROL_VERSION=2.5.134
+ENV CRUISE_CONTROL_VERSION=2.5.137
 WORKDIR ${CRUISE_CONTROL_HOME}
 RUN wget https://github.com/linkedin/cruise-control/archive/refs/tags/${CRUISE_CONTROL_VERSION}.tar.gz
 RUN tar -xzf ${CRUISE_CONTROL_VERSION}.tar.gz
@@ -21,7 +21,7 @@ CMD ./kafka-cruise-control-start.sh ${CRUISE_CONTROL_HOME}/config/cruisecontrol.
 FROM confluentinc/cp-kafka:7.3.3 as kafka
 
 ENV CRUISE_CONTROL_HOME=/opt/cruise-control
-ENV CRUISE_CONTROL_VERSION=2.5.134
+ENV CRUISE_CONTROL_VERSION=2.5.137
 COPY --from=cruise-control \
     ${CRUISE_CONTROL_HOME}/cruise-control-${CRUISE_CONTROL_VERSION}/cruise-control-metrics-reporter/build/libs/cruise-control-metrics-reporter-${CRUISE_CONTROL_VERSION}.jar \
     /usr/share/java/kafka/
