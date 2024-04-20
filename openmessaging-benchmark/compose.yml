@@ -1,16 +1,30 @@
 services:
   worker:
+    image: jeqo/openmessaging-benchmark
     build:
       context: .
       dockerfile: Dockerfile
+    environment:
+      HEAP_OPTS: "-Xms1G -Xmx1G"
     ports:
       - "8080:8080"
+    deploy:
+      resources:
+        limits:
+          memory: 2G
   worker1:
+    image: jeqo/openmessaging-benchmark
     build:
       context: .
       dockerfile: Dockerfile
+    environment:
+      HEAP_OPTS: "-Xms1G -Xmx1G"
     ports:
       - "18080:8080"
+    deploy:
+      resources:
+        limits:
+          memory: 2G
 
   # kafka cluster
   zookeeper:
@@ -27,15 +41,66 @@ services:
     ports:
       - "9092:9092"
     environment:
+      kafka_opts: "-xms1g -xmx1g"
       KAFKA_BROKER_ID: 0
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
       KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092,BROKER://0.0.0.0:9091"
       KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://localhost:9092,BROKER://kafka:9091"
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,BROKER:PLAINTEXT"
       KAFKA_INTER_BROKER_LISTENER_NAME: "BROKER"
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS: 1
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS: 50
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+  kafka1:
+    image: confluentinc/cp-kafka:7.3.3
+    depends_on:
+      - zookeeper
+    ports:
+      - "19092:9092"
+    environment:
+      HEAP_OPTS: "-Xms1G -Xmx1G"
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:19092,BROKER://0.0.0.0:9091"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://localhost:19092,BROKER://kafka1:9091"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,BROKER:PLAINTEXT"
+      KAFKA_INTER_BROKER_LISTENER_NAME: "BROKER"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS: 50
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+  kafka2:
+    image: confluentinc/cp-kafka:7.3.3
+    depends_on:
+      - zookeeper
+    ports:
+      - "29092:9092"
+    environment:
+      HEAP_OPTS: "-Xms1G -Xmx1G"
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:29092,BROKER://0.0.0.0:9091"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://localhost:29092,BROKER://kafka2:9091"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,BROKER:PLAINTEXT"
+      KAFKA_INTER_BROKER_LISTENER_NAME: "BROKER"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_OFFSETS_TOPIC_NUM_PARTITIONS: 50
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
+    deploy:
+      resources:
+        limits:
+          memory: 2G
 
