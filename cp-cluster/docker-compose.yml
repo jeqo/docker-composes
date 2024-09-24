@@ -1,12 +1,11 @@
 ---
-version: '3.4'
-x-kafka-env:
-  &kafka-env
+version: "3.4"
+x-kafka-env: &kafka-env
   KAFKA_ZOOKEEPER_CONNECT: zk1:2181
   KAFKA_NUM_PARTITIONS: 12
   KAFKA_DEFAULT_REPLICATION_FACTOR: 3
   KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-  
+
   KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
   KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
   KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
@@ -28,8 +27,8 @@ services:
     image: confluentinc/cp-kafka:${CP_VERSION}
     ports:
       - "19092:19092"
-    environment: 
-      << : *kafka-env
+    environment:
+      <<: *kafka-env
       KAFKA_BROKER_ID: 1
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:9092,PLAINTEXT_HOST://localhost:19092
     volumes:
@@ -39,8 +38,8 @@ services:
     image: confluentinc/cp-kafka:${CP_VERSION}
     ports:
       - "29092:29092"
-    environment: 
-      << : *kafka-env
+    environment:
+      <<: *kafka-env
       KAFKA_BROKER_ID: 2
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:9092,PLAINTEXT_HOST://localhost:29092
     volumes:
@@ -50,8 +49,8 @@ services:
     image: confluentinc/cp-kafka:${CP_VERSION}
     ports:
       - "39092:39092"
-    environment: 
-      << : *kafka-env
+    environment:
+      <<: *kafka-env
       KAFKA_BROKER_ID: 3
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3:9092,PLAINTEXT_HOST://localhost:39092
     volumes:
@@ -66,3 +65,4 @@ volumes:
   kafka1-data:
   kafka2-data:
   kafka3-data:
+
