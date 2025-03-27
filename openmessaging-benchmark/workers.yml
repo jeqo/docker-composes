@@ -1,4 +1,4 @@
 workers:
-  - http://worker:8080
-  - http://worker1:8080
+  - http://localhost:8080
+  - http://localhost:18080
 
